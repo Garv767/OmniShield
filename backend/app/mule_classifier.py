@@ -37,9 +37,18 @@ def predict_mule_score(features: dict) -> dict:
     if _MODEL is None or _FEATURE_NAMES is None:
         raise ValueError("ML model is not loaded. Please train the model first.")
 
+    print(f"DEBUG: _CATEGORICAL_INFO is: {_CATEGORICAL_INFO}")
+    print(f"DEBUG: F2230 in _CATEGORICAL_INFO: {'F2230' in _CATEGORICAL_INFO if _CATEGORICAL_INFO else False}")
+    
     # Convert the input dictionary to a DataFrame matching the training features
     # Missing features will be NaN, which XGBoost handles natively.
     df_input = pd.DataFrame([features], columns=_FEATURE_NAMES)
+    
+    # Ensure all non-categorical columns are numeric (float)
+    # This prevents columns with None/NaN values from being typed as 'object' in a single-row DataFrame.
+    categorical_cols = set(_CATEGORICAL_INFO.keys()) if _CATEGORICAL_INFO else set()
+    non_cat_cols = [col for col in _FEATURE_NAMES if col not in categorical_cols]
+    df_input[non_cat_cols] = df_input[non_cat_cols].apply(pd.to_numeric, errors='coerce')
     
     # Cast categorical columns to the correct categories
     if _CATEGORICAL_INFO:
@@ -61,10 +70,19 @@ def predict_mule_score(features: dict) -> dict:
     for i, fname in enumerate(_FEATURE_NAMES):
         if importances[i] > 0:
             val = df_input.iloc[0, i]
+            
+            # Convert to a JSON-serializable python type
+            serializable_val = None
+            if not pd.isna(val):
+                try:
+                    serializable_val = float(val)
+                except (ValueError, TypeError):
+                    serializable_val = str(val)
+
             feature_impacts.append({
                 "feature": fname,
                 "importance": float(importances[i]),
-                "value": float(val) if not pd.isna(val) else None
+                "value": serializable_val
             })
             
     # Sort by importance descending and take top 10
