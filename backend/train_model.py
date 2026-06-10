@@ -38,6 +38,11 @@ def main():
     df = df.dropna(subset=[target_col])
     print(f"Dropped {initial_len - len(df)} rows with missing target. {len(df)} rows remaining.")
 
+    # Drop index column if present to avoid data leakage
+    if "Unnamed: 0" in df.columns:
+        print("Dropping 'Unnamed: 0' (index column) to avoid leakage...")
+        df = df.drop(columns=["Unnamed: 0"])
+
     print("Splitting features and target...")
     X = df.drop(columns=[target_col])
     y = df[target_col]
