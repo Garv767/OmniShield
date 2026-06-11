@@ -13,6 +13,9 @@ def generate_suspicious_activity_report(db: Session, account_id: str) -> str:
     and uses LangChain (OpenAI/Gemini) to generate a 3-paragraph SAR.
     Falls back to a template-based generator if no keys are available.
     """
+    openai_key = os.getenv("OPENAI_API_KEY")
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    
     # 1. Fetch data from DB
     user = db.get(UserProfile, account_id)
     name = user.name if user else "Unknown Account Owner"
@@ -74,9 +77,6 @@ def generate_suspicious_activity_report(db: Session, account_id: str) -> str:
     )
 
     # 3. Choose Generator (LLM or Template Fallback)
-    openai_key = os.getenv("OPENAI_API_KEY")
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    
     system_prompt = (
         "You are an expert financial crimes investigator and compliance officer. "
         "Your task is to write a formal 3-paragraph Suspicious Activity Report (SAR) "
