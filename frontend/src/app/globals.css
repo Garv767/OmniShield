@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: 0 0% 0%;
-  --card: 220 28% 6%;
-  --foreground: 0 0% 95%;
-  --primary: 140 100% 50%;
-  --destructive: 0 100% 60%;
-  --secondary: 0 0% 9%;
-  --border: 0 0% 15%;
+  --background: 210 40% 98%;
+  --card: 0 0% 100%;
+  --foreground: 222.2 47.4% 11.2%;
+  --primary: 221.2 83.2% 53.3%;
+  --destructive: 346.8 77.2% 49.8%;
+  --secondary: 210 40% 96.1%;
+  --border: 214.3 31.8% 91.4%;
+  --success: 142.1 76.2% 36.3%;
 }
 
 @theme {
@@ -18,8 +19,9 @@
   --color-destructive: hsl(var(--destructive));
   --color-secondary: hsl(var(--secondary));
   --color-border: hsl(var(--border));
+  --color-success: hsl(var(--success));
 
-  --font-sans: var(--font-sora);
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 }
 
@@ -30,22 +32,21 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-
 /* Custom scrollbar for terminals */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: hsl(var(--background));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #262626;
-  border-radius: 0px;
+  background: hsl(var(--border));
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: hsl(var(--primary) / 0.3);
 }

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Sora, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const sora = Sora({
-  variable: "--font-sora",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -27,9 +27,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sora.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex bg-black text-neutral-300 font-sans overflow-hidden">
+      <body className="min-h-full flex bg-background text-foreground font-sans overflow-hidden">
         <Sidebar />
         <div className="flex-1 overflow-y-auto">
           {children}
