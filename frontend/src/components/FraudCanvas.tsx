@@ -126,10 +126,10 @@ const FraudCanvas = () => {
 
         if (fromNode.isFraud || toNode.isFraud) {
           const intensity = Math.max(fromNode.fraudIntensity, toNode.fraudIntensity);
-          ctx.strokeStyle = `rgba(245, 61, 61, ${0.1 + intensity * 0.4})`;
+          ctx.strokeStyle = `rgba(239, 68, 68, ${0.1 + intensity * 0.4})`;
           ctx.lineWidth = 1 + intensity * 0.5;
         } else {
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)'; // Barely visible grey lines
+          ctx.strokeStyle = 'rgba(15, 23, 42, 0.06)'; // Barely visible grey lines
           ctx.lineWidth = 0.5;
         }
         ctx.stroke();
@@ -140,7 +140,7 @@ const FraudCanvas = () => {
         const fn = nodes[fraudNodeIdx];
         ctx.beginPath();
         ctx.arc(fn.x, fn.y, rippleRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(245, 61, 61, ${rippleOpacity})`;
+        ctx.strokeStyle = `rgba(239, 68, 68, ${rippleOpacity})`;
         ctx.lineWidth = 0.8;
         ctx.stroke();
       }
@@ -163,9 +163,9 @@ const FraudCanvas = () => {
         ctx.beginPath();
         ctx.arc(px, py, 1.0, 0, Math.PI * 2);
         if (fromNode.isFraud || toNode.isFraud) {
-          ctx.fillStyle = '#FF3333'; // alert red
+          ctx.fillStyle = '#ef4444'; // alert red
         } else {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'; // Stark light grey instead of green
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.2)'; // Stark dark grey instead of green
         }
         ctx.fill();
       });
@@ -175,12 +175,12 @@ const FraudCanvas = () => {
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.radius + (node.isFraud ? 1.5 : 0), 0, Math.PI * 2);
         if (node.isFraud) {
-          ctx.fillStyle = `rgba(245, 61, 61, ${node.fraudIntensity})`;
-          ctx.strokeStyle = '#FF3333';
+          ctx.fillStyle = `rgba(239, 68, 68, ${node.fraudIntensity})`;
+          ctx.strokeStyle = '#ef4444';
           ctx.lineWidth = 0.5;
           ctx.stroke();
         } else {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.05)';
         }
         ctx.fill();
       });

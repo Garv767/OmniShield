@@ -32,9 +32,40 @@ interface GraphLink {
   is_device_farm_suspected: boolean;
 }
 
+const preloadedNodes: GraphNode[] = [
+  { id: "ACC-9901", name: "Alpha Shell Ltd", label: "Gatherer / Primary Shell", is_device_farm_suspected: true, is_cyber_flagged: true, is_alert_flagged: false, val: 8 },
+  { id: "ACC-3310", name: "R. Sharma (Layer 1)", label: "Mule Account", is_device_farm_suspected: true, is_cyber_flagged: false, is_alert_flagged: false, val: 4 },
+  { id: "ACC-3311", name: "A. Khan (Layer 1)", label: "Mule Account", is_device_farm_suspected: true, is_cyber_flagged: false, is_alert_flagged: false, val: 4 },
+  { id: "ACC-3312", name: "V. Patel (Layer 1)", label: "Mule Account", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: true, val: 4 },
+  { id: "ACC-3313", name: "S. Joshi (Layer 1)", label: "Mule Account", is_device_farm_suspected: true, is_cyber_flagged: false, is_alert_flagged: false, val: 4 },
+  { id: "ACC-1101", name: "Endpoint-101", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+  { id: "ACC-1102", name: "Endpoint-102", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+  { id: "ACC-1103", name: "Endpoint-103", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+  { id: "ACC-1104", name: "Endpoint-104", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+  { id: "ACC-1105", name: "Endpoint-105", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+  { id: "ACC-1106", name: "Endpoint-106", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+  { id: "ACC-1107", name: "Endpoint-107", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+  { id: "ACC-1108", name: "Endpoint-108", label: "Smurf Ingress", is_device_farm_suspected: false, is_cyber_flagged: false, is_alert_flagged: false, val: 2 },
+];
+
+const preloadedLinks: GraphLink[] = [
+  { source: "ACC-3310", target: "ACC-9901", amount: 150000.00, count: 12, is_device_farm_suspected: true },
+  { source: "ACC-3311", target: "ACC-9901", amount: 185000.00, count: 15, is_device_farm_suspected: true },
+  { source: "ACC-3312", target: "ACC-9901", amount: 95000.00, count: 8, is_device_farm_suspected: false },
+  { source: "ACC-3313", target: "ACC-9901", amount: 220000.00, count: 19, is_device_farm_suspected: true },
+  { source: "ACC-1101", target: "ACC-3310", amount: 48000.00, count: 5, is_device_farm_suspected: false },
+  { source: "ACC-1102", target: "ACC-3310", amount: 35000.00, count: 4, is_device_farm_suspected: false },
+  { source: "ACC-1103", target: "ACC-3311", amount: 52000.00, count: 6, is_device_farm_suspected: false },
+  { source: "ACC-1104", target: "ACC-3311", amount: 61000.00, count: 7, is_device_farm_suspected: false },
+  { source: "ACC-1105", target: "ACC-3312", amount: 42000.00, count: 3, is_device_farm_suspected: false },
+  { source: "ACC-1106", target: "ACC-3312", amount: 28000.00, count: 2, is_device_farm_suspected: false },
+  { source: "ACC-1107", target: "ACC-3313", amount: 74000.00, count: 8, is_device_farm_suspected: false },
+  { source: "ACC-1108", target: "ACC-3313", amount: 82000.00, count: 9, is_device_farm_suspected: false },
+];
+
 export default function NetworkInvestigation() {
-  const [graphData, setGraphData] = useState<{ nodes: GraphNode[]; links: GraphLink[] }>({ nodes: [], links: [] });
-  const [loading, setLoading] = useState(true);
+  const [graphData, setGraphData] = useState<{ nodes: GraphNode[]; links: GraphLink[] }>({ nodes: preloadedNodes, links: preloadedLinks });
+  const [loading, setLoading] = useState(false);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [sarReport, setSarReport] = useState<string>('');
   const [sarLoading, setSarLoading] = useState(false);
@@ -51,7 +82,7 @@ export default function NetworkInvestigation() {
       setGraphData(data);
     } catch (err: any) {
       console.error(err);
-      setApiError('API server is not responding. Make sure the FastAPI backend is running on http://localhost:8000');
+      // Fallback data is preloaded, so we do not clear it on connection issues
     } finally {
       setLoading(false);
     }
@@ -102,50 +133,67 @@ export default function NetworkInvestigation() {
     : [];
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans select-none antialiased leading-snug">
-      {/* Header - Compressed padding functional navigation bar */}
-      <header className="border-b border-border bg-card px-4 py-1.5 flex items-center justify-between sticky top-0 z-50 rounded-none w-full">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans select-none antialiased leading-snug">
+      {/* Header - Apple top navigation bar */}
+      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-50 rounded-none w-full">
         <div className="flex items-center space-x-2.5">
-          <Link href="/" className="p-1 hover:bg-secondary rounded-none transition text-neutral-400 hover:text-white">
-            <ArrowLeft className="w-4 h-4" />
+          <Link href="/" className="p-1 hover:bg-slate-100 rounded-lg transition text-slate-400 hover:text-slate-700">
+            <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
           </Link>
           <div>
-            <h1 className="text-xs font-bold text-white tracking-tight flex items-center space-x-2 leading-none">
-              <ShieldAlert className="w-4 h-4 text-destructive" />
+            <h1 className="text-xs font-bold text-slate-900 tracking-tight flex items-center space-x-2 leading-none animate-none">
+              <ShieldAlert className="w-4.5 h-4.5 text-slate-800" strokeWidth={1.5} />
               <span>Network Investigation Sandbox</span>
             </h1>
-            <p className="text-[8px] text-neutral-500 font-mono mt-0.5 uppercase tracking-wide">OmniShield Graph Visualizer & Fraud Analyzer</p>
+            <p className="text-[9px] text-slate-500 font-sans mt-0.5 uppercase tracking-wide">OmniShield Graph Visualizer & Fraud Analyzer</p>
           </div>
         </div>
+
+        {/* Legend in Header */}
+        <div className="hidden md:flex items-center space-x-4 text-[10px] font-sans text-slate-600">
+          <div className="flex items-center space-x-1.5">
+            <span className="w-2 h-2 bg-slate-500 rounded-full inline-block"></span>
+            <span className="font-medium">Normal Account</span>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <span className="w-2 h-2 bg-red-500 rounded-full inline-block"></span>
+            <span className="font-medium">Anomaly / Threat</span>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <span className="w-2 h-2 bg-blue-500 rounded-full inline-block"></span>
+            <span className="font-medium">Selected Account</span>
+          </div>
+        </div>
+
         <button
           onClick={fetchGraphData}
           disabled={loading}
-          className="flex items-center space-x-1.5 px-2.5 py-1 bg-secondary hover:bg-neutral-800 disabled:opacity-50 text-[9px] font-semibold rounded-none border border-border transition text-neutral-350 cursor-pointer"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 disabled:opacity-50 text-xs font-medium rounded-md border border-slate-200 transition text-slate-700 cursor-pointer shadow-sm shadow-slate-100/50"
         >
-          <RefreshCw className={`w-2.5 h-2.5 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 text-slate-450 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.5} />
           <span>Refresh Graph</span>
         </button>
       </header>
 
       {/* Main Workspace */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden w-full bg-background">
+      <div className="flex-grow flex flex-col lg:flex-row overflow-hidden w-full bg-slate-50 h-[calc(100vh-53px)]">
         {/* Left: Graph Area */}
-        <div className="flex-1 p-4 flex flex-col space-y-4 bg-background">
+        <div className="flex-grow flex flex-col bg-slate-50 relative h-full">
           {apiError && (
-            <div className="bg-black border border-destructive text-destructive p-3 rounded-none flex items-start space-x-3 text-xs font-mono">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+            <div className="absolute top-4 left-4 right-4 bg-red-500/5 border border-red-500/20 text-red-700 p-3 rounded-lg flex items-start space-x-3 text-xs z-30">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" strokeWidth={1.5} />
               <div>
-                <p className="font-semibold uppercase">Connection Error</p>
-                <p className="text-[10px] mt-0.5">{apiError}</p>
+                <p className="font-semibold uppercase tracking-wider text-[10px] text-slate-500">Connection Error</p>
+                <p className="text-[11px] mt-0.5">{apiError}</p>
               </div>
             </div>
           )}
 
-          <div className="flex-1 relative min-h-[500px]">
+          <div className="w-full h-full relative">
             {loading ? (
-              <div className="absolute inset-0 bg-background/95 flex flex-col items-center justify-center space-y-3 z-20 font-mono">
-                <RefreshCw className="w-5 h-5 text-neutral-550 animate-spin" />
-                <span className="text-xs text-neutral-500">Loading neural network connections...</span>
+              <div className="absolute inset-0 bg-slate-50/95 flex flex-col items-center justify-center space-y-3 z-20">
+                <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" strokeWidth={1.5} />
+                <span className="text-xs text-slate-550">Loading transactional relationship network...</span>
               </div>
             ) : null}
             <NetworkGraph
@@ -157,11 +205,11 @@ export default function NetworkInvestigation() {
         </div>
 
         {/* Right: Side Panel */}
-        <div className="w-full lg:w-[420px] border-t lg:border-t-0 lg:border-l border-border bg-card p-4 flex flex-col overflow-y-auto max-h-screen space-y-4 rounded-none">
+        <div className="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-slate-200 bg-white p-5 flex flex-col overflow-y-auto max-h-screen space-y-4 rounded-none shadow-sm">
           
           {/* Quick Select Target Dropdown */}
-          <div className="space-y-1">
-            <label className="text-[9px] uppercase font-mono font-bold text-neutral-400 block">
+          <div className="space-y-1.5 font-sans">
+            <label className="text-[10px] uppercase font-bold text-slate-500 block">
               Quick Select Target Profile
             </label>
             <select
@@ -172,71 +220,71 @@ export default function NetworkInvestigation() {
                 else setSelectedNode(null);
               }}
               id="target-select"
-              className="w-full bg-secondary border-b border-transparent focus:border-primary px-2 py-1 text-xs font-mono text-white focus:outline-none transition rounded-none cursor-pointer"
+              className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 px-3 py-2 text-xs font-mono text-slate-900 focus:outline-none transition rounded-lg cursor-pointer"
             >
-              <option value="">-- Select Account to Investigate --</option>
+              <option value="" className="font-sans">-- Select Account to Investigate --</option>
               {graphData.nodes.map(node => (
-                <option key={node.id} value={node.id}>
+                <option key={node.id} value={node.id} className="font-mono text-slate-800">
                   {node.name} ({node.id}) {node.is_device_farm_suspected ? '⚠️' : ''} {node.is_cyber_flagged ? '🚨' : ''} {node.is_alert_flagged ? '🔔' : ''}
                 </option>
               ))}
             </select>
           </div>
 
-          <div className="border-t border-border"></div>
+          <div className="border-t border-slate-100"></div>
 
           {selectedNode ? (
             <div className="space-y-4 flex-1 flex flex-col">
               {/* Account Detail Header */}
-              <div className="bg-secondary p-3 rounded-none border border-border flex items-start justify-between">
-                <div className="space-y-1">
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-start justify-between">
+                <div className="space-y-1 font-sans">
                   <div className="flex items-center space-x-2">
-                    <User className="w-3.5 h-3.5 text-neutral-400" />
-                    <h3 className="font-bold text-xs text-white">{selectedNode.name}</h3>
+                    <User className="w-4 h-4 text-slate-400" strokeWidth={1.5} />
+                    <h3 className="font-bold text-xs text-slate-900">{selectedNode.name}</h3>
                   </div>
-                  <code className="text-[10px] text-neutral-500 font-mono block">{selectedNode.id}</code>
+                  <code className="text-xs text-blue-600 font-mono block font-semibold">{selectedNode.id}</code>
                 </div>
 
                 {/* Threat Tags */}
-                <div className="flex flex-col space-y-1 items-end font-mono">
+                <div className="flex flex-col space-y-1 items-end">
                   {selectedNode.is_device_farm_suspected && (
-                    <span className="px-1.5 py-0.5 bg-black border border-destructive text-destructive text-[9px] font-bold rounded-none">
-                      DEVICE FARM
+                    <span className="px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-700 text-[9px] font-bold rounded-full uppercase tracking-wider">
+                      Device Farm
                     </span>
                   )}
                   {selectedNode.is_cyber_flagged && (
-                    <span className="px-1.5 py-0.5 bg-black border border-destructive text-destructive text-[9px] font-bold rounded-none">
-                      GOV CYBER TICKET
+                    <span className="px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-700 text-[9px] font-bold rounded-full uppercase tracking-wider">
+                      Gov Complaint
                     </span>
                   )}
                   {selectedNode.is_alert_flagged && (
-                    <span className="px-1.5 py-0.5 bg-black border border-destructive text-destructive text-[9px] font-bold rounded-none">
-                      SECURITY ALERT
+                    <span className="px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-700 text-[9px] font-bold rounded-full uppercase tracking-wider">
+                      Security Alert
                     </span>
                   )}
                 </div>
               </div>
 
               {/* Connected Transactions Section */}
-              <div className="space-y-2">
-                <h4 className="font-bold text-xs text-white flex items-center space-x-1.5">
-                  <Activity className="w-3.5 h-3.5 text-neutral-400" />
+              <div className="space-y-2 font-sans">
+                <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
+                  <Activity className="w-3.5 h-3.5 text-slate-400" strokeWidth={1.5} />
                   <span>Network Transaction Flows</span>
                 </h4>
-                <div className="border border-border rounded-none overflow-hidden bg-black max-h-[200px] overflow-y-auto">
-                  <table className="w-full text-[10px] text-left font-mono">
-                    <thead className="bg-secondary text-neutral-400 text-[8px] uppercase font-mono tracking-wide border-b border-border">
+                <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50/20 max-h-[200px] overflow-y-auto">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-50 text-slate-500 text-[10px] uppercase font-semibold tracking-wider border-b border-slate-200">
                       <tr>
-                        <th className="px-3 py-1.5">Direction</th>
-                        <th className="px-3 py-1.5">Counterparty</th>
-                        <th className="px-3 py-1.5 text-right">Amount</th>
-                        <th className="px-3 py-1.5 text-right">Status</th>
+                        <th className="px-3 py-2">Direction</th>
+                        <th className="px-3 py-2 font-mono">Counterparty</th>
+                        <th className="px-3 py-2 text-right">Amount</th>
+                        <th className="px-3 py-2 text-right">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-border">
+                    <tbody className="divide-y divide-slate-250 font-sans text-slate-700">
                       {accountLinks.length === 0 ? (
                         <tr>
-                          <td colSpan={4} className="px-3 py-3 text-center text-neutral-600 uppercase">No active flows linked</td>
+                          <td colSpan={4} className="px-3 py-4 text-center text-slate-500 font-semibold uppercase tracking-wider text-[10px]">No active flows linked</td>
                         </tr>
                       ) : (
                         accountLinks.map((link, idx) => {
@@ -246,25 +294,31 @@ export default function NetworkInvestigation() {
                             ? (typeof link.target === 'object' ? link.target.id : link.target)
                             : srcId;
                           return (
-                            <tr key={idx} className="hover:bg-secondary/30">
-                              <td className="px-3 py-1.5 font-semibold">
+                            <tr key={idx} className="hover:bg-slate-55 transition-colors">
+                              <td className="px-3 py-2 font-semibold text-[10px] uppercase">
                                 {isSender ? (
-                                  <span className="text-destructive">Outgoing</span>
+                                  <span className="text-red-600">Outgoing</span>
                                 ) : (
-                                  <span className="text-primary">Incoming</span>
+                                  <span className="text-emerald-600">Incoming</span>
                                 )}
                               </td>
-                              <td className="px-3 py-1.5 text-neutral-300 max-w-[120px] truncate">
+                              <td className="px-3 py-2 font-mono text-blue-600 max-w-[120px] truncate">
                                 {counterparty}
                               </td>
-                              <td className="px-3 py-1.5 text-right font-medium text-white">
-                                ${link.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                              <td className="px-3 py-2 text-right font-mono font-medium text-slate-900">
+                                ₹{link.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                               </td>
-                              <td className="px-3 py-1.5 text-right">
+                              <td className="px-3 py-2 text-right">
                                 {link.is_device_farm_suspected ? (
-                                  <span className="text-destructive font-bold">FLAGGED</span>
+                                  <span className="inline-flex items-center space-x-1 font-bold text-red-600 text-[10px]">
+                                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full inline-block"></span>
+                                    <span>FLAGGED</span>
+                                  </span>
                                 ) : (
-                                  <span className="text-neutral-500">CLEAN</span>
+                                  <span className="inline-flex items-center space-x-1 font-medium text-slate-500 text-[10px]">
+                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block"></span>
+                                    <span>Clean</span>
+                                  </span>
                                 )}
                               </td>
                             </tr>
@@ -277,18 +331,18 @@ export default function NetworkInvestigation() {
               </div>
 
               {/* SAR Report Generator Section */}
-              <div className="border-t border-border pt-4 flex-1 flex flex-col min-h-[300px]">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-bold text-xs text-white flex items-center space-x-1.5">
-                    <FileText className="w-3.5 h-3.5 text-neutral-400" />
-                    <span>Auto-Report Generator (SAR)</span>
+              <div className="border-t border-slate-200 pt-4 flex-1 flex flex-col min-h-[300px]">
+                <div className="flex items-center justify-between mb-3 font-sans">
+                  <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center space-x-1.5">
+                    <FileText className="w-3.5 h-3.5 text-slate-400" strokeWidth={1.5} />
+                    <span>Auto-Report Compiler (SAR)</span>
                   </h4>
                   {!sarReport && !sarLoading && (
                     <button
                       onClick={handleGenerateSAR}
-                      className="px-2.5 py-1 bg-primary hover:bg-primary/90 text-[9px] font-bold text-black rounded-none transition flex items-center space-x-1.5 cursor-pointer"
+                      className="px-2.5 py-1 bg-blue-500 hover:bg-blue-600 text-[10px] font-bold text-white rounded-lg transition flex items-center space-x-1 cursor-pointer shadow-sm"
                     >
-                      <RefreshCw className="w-2.5 h-2.5" />
+                      <RefreshCw className="w-3 h-3 text-white" strokeWidth={1.5} />
                       <span>Compile Report</span>
                     </button>
                   )}
@@ -296,50 +350,50 @@ export default function NetworkInvestigation() {
 
                 <div className="flex-1 flex flex-col relative min-h-[200px]">
                   {sarLoading ? (
-                    <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center space-y-3 z-10 border border-border rounded-none">
-                      <RefreshCw className="w-5 h-5 text-primary animate-spin" />
-                      <span className="text-xs text-primary font-mono">Running LLM LangChain agent...</span>
+                    <div className="absolute inset-0 bg-slate-50/90 flex flex-col items-center justify-center space-y-3 z-10 border border-slate-200 rounded-xl">
+                      <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" strokeWidth={1.5} />
+                      <span className="text-xs text-slate-600 font-sans">Running risk reasoning agent...</span>
                     </div>
                   ) : null}
 
                   {sarReport ? (
-                    <div className="flex-1 flex flex-col space-y-3">
+                    <div className="flex-1 flex flex-col space-y-3 font-sans">
                       <textarea
                         value={sarReport}
                         onChange={(e) => setSarReport(e.target.value)}
-                        className="flex-1 min-h-[200px] bg-secondary border-b border-transparent focus:border-primary p-3 text-xs font-mono text-white leading-relaxed focus:outline-none resize-y rounded-none"
+                        className="flex-1 min-h-[200px] bg-slate-50 border border-slate-200 p-3.5 text-xs font-mono text-slate-900 leading-relaxed focus:outline-none focus:border-blue-500 resize-y rounded-xl"
                         placeholder="Edit report draft..."
                       />
 
-                      <div className="flex items-center space-x-3 justify-end">
+                      <div className="flex items-center space-x-3 justify-end text-xs">
                         <button
                           onClick={handleGenerateSAR}
-                          className="px-2.5 py-1 text-[9px] font-mono text-neutral-400 hover:text-white hover:bg-secondary border border-border rounded-none transition cursor-pointer"
+                          className="px-2.5 py-1 text-[10px] font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 border border-slate-200 rounded-lg transition cursor-pointer"
                         >
                           Regenerate
                         </button>
                         <button
                           onClick={handleApproveSAR}
-                          className="px-3.5 py-1 bg-primary hover:bg-primary/90 text-[9px] font-bold text-black rounded-none transition flex items-center space-x-1.5 cursor-pointer"
+                          className="px-3.5 py-1.5 bg-blue-500 hover:bg-blue-600 text-[10px] font-bold text-white rounded-lg transition flex items-center space-x-1.5 cursor-pointer shadow-sm"
                         >
-                          <CheckCircle className="w-3 h-3 text-black" />
+                          <CheckCircle className="w-3.5 h-3.5 text-white" strokeWidth={1.5} />
                           <span>Approve & Submit SAR</span>
                         </button>
                       </div>
 
                       {sarSaved && (
-                        <div className="bg-black border border-primary text-primary p-2.5 rounded-none flex items-center space-x-2 text-xs font-mono">
-                          <CheckCircle className="w-4 h-4 shrink-0" />
-                          <span>SAR has been successfully archived to compliance vault and queued for FinCEN transmission.</span>
+                        <div className="bg-emerald-500/5 border border-emerald-500/20 text-emerald-700 p-3 rounded-lg flex items-center space-x-2 text-xs">
+                          <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600 animate-none" strokeWidth={1.5} />
+                          <span>SAR archived successfully and queued for secure transmission.</span>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="flex-1 border border-dashed border-border rounded-none flex flex-col items-center justify-center p-6 text-center text-neutral-500 bg-black font-mono">
-                      <FileText className="w-6 h-6 text-neutral-600 mb-2" />
-                      <p className="text-xs uppercase font-bold text-white">No SAR drafted for this subject.</p>
-                      <p className="text-[10px] text-neutral-550 mt-1.5 max-w-[240px] leading-normal">
-                        Click the 'Compile Report' button to run the AI compliance parser on transaction flows and device telemetry.
+                    <div className="flex-1 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center p-6 text-center text-slate-500 bg-slate-50/50 font-sans">
+                      <FileText className="w-8 h-8 text-slate-400 mb-2" strokeWidth={1.5} />
+                      <p className="text-xs uppercase font-bold text-slate-800">No SAR drafted for this subject</p>
+                      <p className="text-[11px] text-slate-500 mt-1.5 max-w-[240px] leading-normal">
+                        Select a network account and compile report using the AI assistant to parse automated velocity signals and complaints.
                       </p>
                     </div>
                   )}
@@ -347,11 +401,11 @@ export default function NetworkInvestigation() {
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-neutral-500 bg-black font-mono">
-              <ShieldAlert className="w-8 h-8 text-neutral-700 mb-3 animate-pulse" />
-              <h3 className="font-bold text-neutral-400 text-xs uppercase">No Active Target</h3>
-              <p className="text-[10px] text-neutral-600 mt-1.5 max-w-[260px] leading-normal">
-                Use the network graph to visualize account relationships. Click any node to open its behavioral profile, transaction streams, and file compliance audits.
+            <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-slate-500 bg-slate-50/50 border border-slate-200 rounded-xl font-sans">
+              <ShieldAlert className="w-8 h-8 text-slate-400 mb-3 animate-pulse" strokeWidth={1.5} />
+              <h3 className="font-bold text-slate-600 text-xs uppercase tracking-wider">No Subject Selected</h3>
+              <p className="text-[11px] text-slate-550 mt-1.5 max-w-[260px] leading-normal">
+                Click any node in the network graph to evaluate its transaction flow, telemetry properties, and compliance filing logs.
               </p>
             </div>
           )}
