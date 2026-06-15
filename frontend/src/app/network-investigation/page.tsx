@@ -368,9 +368,9 @@ export default function NetworkInvestigation() {
         <button
           onClick={fetchGraphData}
           disabled={loading}
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 text-xs font-medium rounded-md border border-slate-200 dark:border-slate-800 transition text-slate-700 dark:text-slate-350 hover:text-slate-900 cursor-pointer shadow-sm"
+          className="flex items-center space-x-1.5 px-3 py-1.5 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 text-xs font-medium rounded-md border border-slate-200 dark:border-slate-800 transition text-slate-700 dark:text-slate-300 hover:text-slate-900 cursor-pointer shadow-sm"
         >
-          <RefreshCw className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.5} />
+          <RefreshCw className={`w-4 h-4 mr-1 text-slate-700 dark:text-slate-300 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.5} />
           <span>Refresh Network</span>
         </button>
       </header>
@@ -421,7 +421,7 @@ export default function NetworkInvestigation() {
             </button>
 
             {/* Slider */}
-            <div className="flex-1 w-full flex flex-col space-y-1">
+            <div className="flex-1 w-full flex flex-col space-y-2">
               <input
                 type="range"
                 min={0}
@@ -432,7 +432,7 @@ export default function NetworkInvestigation() {
                   setCurrentStepIndex(parseInt(e.target.value, 10));
                   setIsPlaying(false); // pause on slide interaction
                 }}
-                className="w-full accent-lime-primary bg-slate-200 dark:bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer disabled:opacity-50"
+                className="w-full accent-lime-primary bg-slate-200 dark:bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer disabled:opacity-50 mb-1.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-lime-primary [&::-webkit-slider-thumb]:border-0 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-lime-primary [&::-moz-range-thumb]:border-0"
               />
               
               <div className="flex justify-between items-center text-[9px] font-mono text-slate-500 dark:text-slate-400">
@@ -503,7 +503,7 @@ export default function NetworkInvestigation() {
             <div className={`p-3 rounded-lg flex items-start space-x-2 text-xs border ${
               actionMessage.type === 'success'
                 ? 'bg-lime-primary/10 border-lime-primary/20 text-slate-900 dark:text-lime-primary font-medium'
-                : 'bg-red-500/10 border-red-500/20 text-red-750 dark:text-red-400 font-medium'
+                : 'bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-400 font-medium'
             }`}>
               <CheckCircle className="w-4 h-4 shrink-0 mt-0.5" strokeWidth={1.5} />
               <span>{actionMessage.text}</span>
@@ -594,7 +594,7 @@ export default function NetworkInvestigation() {
                         <th className="px-3 py-2 text-right">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-sans text-slate-700 dark:text-slate-350">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-sans text-slate-700 dark:text-slate-300">
                       {accountLinks.length === 0 ? (
                         <tr>
                           <td colSpan={4} className="px-3 py-4 text-center text-slate-400 font-semibold uppercase tracking-wider text-[10px]">No active flows in state</td>
@@ -615,7 +615,7 @@ export default function NetworkInvestigation() {
                                   <span className="text-teal-500">Incoming</span>
                                 )}
                               </td>
-                              <td className="px-3 py-2 font-mono text-slate-550 dark:text-slate-400 max-w-[120px] truncate">
+                              <td className="px-3 py-2 font-mono text-slate-500 dark:text-slate-400 max-w-[120px] truncate">
                                 {counterparty}
                               </td>
                               <td className="px-3 py-2 text-right font-mono font-medium text-slate-950 dark:text-slate-100">
@@ -677,11 +677,10 @@ export default function NetworkInvestigation() {
                         className="flex-grow bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-3 text-[11px] font-mono text-slate-800 dark:text-slate-200 leading-relaxed focus:outline-none focus:border-lime-primary resize-none rounded-xl"
                         placeholder="Edit report draft..."
                       />
-
                       <div className="flex items-center space-x-3 justify-end text-xs shrink-0">
                         <button
                           onClick={handleGenerateSAR}
-                          className="px-2.5 py-1 text-[10px] font-semibold text-slate-550 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-lg transition cursor-pointer"
+                          className="px-2.5 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg transition cursor-pointer"
                         >
                           Regenerate
                         </button>
@@ -703,9 +702,9 @@ export default function NetworkInvestigation() {
                     </div>
                   ) : (
                     <div className="h-full border border-dashed border-slate-200 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center p-6 text-center text-slate-400 bg-slate-50/50 dark:bg-slate-950/20 font-sans">
-                      <FileText className="w-8 h-8 text-slate-400 dark:text-slate-550 mb-2" strokeWidth={1.5} />
-                      <p className="text-xs uppercase font-bold text-slate-700 dark:text-slate-350">No SAR drafted for this subject</p>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-450 mt-1.5 max-w-[240px] leading-normal font-semibold">
+                      <FileText className="w-8 h-8 text-slate-400 dark:text-slate-500 mb-2" strokeWidth={1.5} />
+                      <p className="text-xs uppercase font-bold text-slate-700 dark:text-slate-300">No SAR drafted for this subject</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 max-w-[240px] leading-normal font-semibold">
                         Select a network account and compile report using the AI assistant to parse automated velocity signals and complaints.
                       </p>
                     </div>
@@ -716,8 +715,8 @@ export default function NetworkInvestigation() {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-slate-500 bg-slate-50/50 dark:bg-slate-950/20 border border-slate-200 dark:border-slate-800 rounded-xl font-sans">
               <ShieldAlert className="w-8 h-8 text-slate-400 dark:text-slate-500 mb-3 animate-pulse" strokeWidth={1.5} />
-              <h3 className="font-bold text-slate-700 dark:text-slate-350 text-xs uppercase tracking-wider">No Subject Selected</h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-450 mt-1.5 max-w-[260px] leading-normal font-semibold">
+              <h3 className="font-bold text-slate-700 dark:text-slate-300 text-xs uppercase tracking-wider">No Subject Selected</h3>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 max-w-[260px] leading-normal font-semibold">
                 Click any node in the network graph to evaluate its transaction flow, telemetry properties, and compliance filing logs.
               </p>
             </div>

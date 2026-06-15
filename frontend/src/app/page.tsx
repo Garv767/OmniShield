@@ -334,14 +334,14 @@ ${selectedTransaction.is_device_farm_suspected
                 <span className="text-[9px] font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase">Visual Graph Explainability Engine</span>
               </div>
               <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase">System Telemetry Overview</h2>
-              <p className="text-xs text-slate-655 dark:text-slate-400 font-medium leading-relaxed font-sans">
+              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed font-sans">
                 Observe cross-channel transaction vectors immediately. OmniShield maps device configuration velocities, geolocation mismatches, and complaints directly within the workspace.
               </p>
             </div>
 
             {/* Sparkline Visualization */}
-            <div className="w-full md:w-64 bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-800 rounded-xl p-3.5 flex flex-col justify-between h-[100px] shrink-0 font-sans relative">
-              <div className="flex items-center justify-between text-[9px] font-bold text-slate-500 dark:text-slate-450 uppercase tracking-wider leading-none">
+            <div className="w-full md:w-64 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 flex flex-col justify-between h-[100px] shrink-0 font-sans relative">
+              <div className="flex items-center justify-between text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider leading-none">
                 <span>Transaction Velocity</span>
                 <span className="text-lime-primary font-mono font-bold">Live Ingestion</span>
               </div>
@@ -484,7 +484,7 @@ ${selectedTransaction.is_device_farm_suspected
                             {tx.is_device_farm_suspected ? (
                               <>
                                 <span className="w-1.5 h-1.5 bg-red-500 rounded-full inline-block"></span>
-                                <span className="text-red-650 dark:text-red-400 font-medium">Flagged</span>
+                                <span className="text-red-600 dark:text-red-400 font-medium">Flagged</span>
                               </>
                             ) : (
                               <>
@@ -536,23 +536,23 @@ ${selectedTransaction.is_device_farm_suspected
                 onClick={handleClosePanel}
                 className="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition"
               >
-                <X className="w-4 h-4 text-slate-600 dark:text-slate-450" strokeWidth={1.5} />
+                <X className="w-4 h-4 text-slate-600 dark:text-slate-400" strokeWidth={1.5} />
               </button>
             </div>
 
             <div className="p-5 space-y-5 flex-1">
               <div>
-                <span className="text-[9px] uppercase tracking-wider text-slate-550 dark:text-slate-450 font-bold block mb-1">Transaction ID</span>
+                <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block mb-1">Transaction ID</span>
                 <span className="font-mono text-sm font-semibold text-slate-900 dark:text-slate-100">{selectedTransaction.id}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-[9px] uppercase tracking-wider text-slate-550 dark:text-slate-450 font-bold block mb-1">Sender</span>
+                  <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block mb-1">Sender</span>
                   <span className="font-mono text-xs text-slate-900 dark:text-slate-100 block">{selectedTransaction.sender_account}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase tracking-wider text-slate-550 dark:text-slate-450 font-bold block mb-1">Receiver</span>
+                  <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block mb-1">Receiver</span>
                   <span className="font-mono text-xs text-slate-900 dark:text-slate-100 block">{selectedTransaction.receiver_account}</span>
                 </div>
               </div>
@@ -565,31 +565,31 @@ ${selectedTransaction.is_device_farm_suspected
                   <Cpu className="w-4 h-4 text-slate-600 dark:text-slate-400 mt-0.5" strokeWidth={1.5} />
                   <div>
                     <span className="text-[9px] uppercase tracking-wider text-slate-700 dark:text-slate-400 block">Device Type</span>
-                    <span className="text-xs text-slate-805 dark:text-slate-205 font-sans font-medium">{selectedTransaction.device_type}</span>
+                    <span className="text-xs text-slate-800 dark:text-slate-200 font-sans font-medium">{selectedTransaction.device_type}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-2.5">
-                  <MapPin className="w-4 h-4 text-slate-605 dark:text-slate-400 mt-0.5" strokeWidth={1.5} />
+                  <MapPin className="w-4 h-4 text-slate-600 dark:text-slate-400 mt-0.5" strokeWidth={1.5} />
                   <div>
                     <span className="text-[9px] uppercase tracking-wider text-slate-700 dark:text-slate-400 block">Ingress Location</span>
-                    <span className="text-xs text-slate-805 dark:text-slate-205 font-sans font-medium">{selectedTransaction.location}</span>
+                    <span className="text-xs text-slate-800 dark:text-slate-200 font-sans font-medium">{selectedTransaction.location}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-2.5">
-                  <Globe className="w-4 h-4 text-slate-605 dark:text-slate-400 mt-0.5" strokeWidth={1.5} />
+                  <Globe className="w-4 h-4 text-slate-600 dark:text-slate-400 mt-0.5" strokeWidth={1.5} />
                   <div>
                     <span className="text-[9px] uppercase tracking-wider text-slate-700 dark:text-slate-400 block">IP Address</span>
-                    <span className="text-xs text-slate-850 dark:text-slate-200 font-mono font-medium">{selectedTransaction.ip_address}</span>
+                    <span className="text-xs text-slate-800 dark:text-slate-200 font-mono font-medium">{selectedTransaction.ip_address}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-2.5">
-                  <Layers className="w-4 h-4 text-slate-605 dark:text-slate-400 mt-0.5" strokeWidth={1.5} />
+                  <Layers className="w-4 h-4 text-slate-600 dark:text-slate-400 mt-0.5" strokeWidth={1.5} />
                   <div>
                     <span className="text-[9px] uppercase tracking-wider text-slate-700 dark:text-slate-400 block">Emulator Flags</span>
-                    <span className="text-xs text-slate-850 dark:text-slate-200 font-sans font-medium">{selectedTransaction.emulator_flags}</span>
+                    <span className="text-xs text-slate-800 dark:text-slate-200 font-sans font-medium">{selectedTransaction.emulator_flags}</span>
                   </div>
                 </div>
               </div>

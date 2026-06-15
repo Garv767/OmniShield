@@ -140,7 +140,7 @@ export default function SimulatorPage() {
             <div className="space-y-2 bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 rounded-lg">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-semibold text-slate-700 dark:text-slate-400 uppercase text-[9px]">Time-To-Transfer</span>
-                <span className="text-teal-650 dark:text-teal-400 font-bold font-mono">{txLoginDelay} Seconds</span>
+                <span className="text-teal-600 dark:text-teal-400 font-bold font-mono">{txLoginDelay} Seconds</span>
               </div>
               <input
                 type="range"
@@ -177,17 +177,17 @@ export default function SimulatorPage() {
         {txResult && (
           <div className={`mt-6 p-4 border rounded-lg text-xs ${txResult.success
             ? txResult.data.is_device_farm_suspected
-              ? 'bg-red-500/5 border-red-500/20 text-red-650 dark:text-red-400'
+              ? 'bg-red-500/5 border-red-500/20 text-red-600 dark:text-red-400'
               : 'bg-lime-primary/15 border-lime-primary/30 text-slate-800 dark:text-lime-primary font-semibold'
-            : 'bg-red-500/5 border-red-500/20 text-red-650 dark:text-red-400'
+            : 'bg-red-500/5 border-red-500/20 text-red-600 dark:text-red-400'
             }`}>
             {txResult.success ? (
               <div className="space-y-1.5">
-                <p className="font-bold uppercase tracking-wider text-[9px] text-slate-500 dark:text-slate-405">Ingestion Ingress Analysis:</p>
+                <p className="font-bold uppercase tracking-wider text-[9px] text-slate-500 dark:text-slate-400">Ingestion Ingress Analysis:</p>
                 <div className="flex items-center space-x-2">
-                  <span className="font-semibold text-slate-500 dark:text-slate-405">Audit Status:</span>
+                  <span className="font-semibold text-slate-500 dark:text-slate-400">Audit Status:</span>
                   {txResult.data.is_device_farm_suspected ? (
-                    <span className="flex items-center space-x-1.5 font-bold text-red-650 dark:text-red-400">
+                    <span className="flex items-center space-x-1.5 font-bold text-red-600 dark:text-red-400">
                       <span className="w-1.5 h-1.5 bg-red-500 rounded-full inline-block"></span>
                       <span>Flagged Anomaly</span>
                     </span>
@@ -199,13 +199,13 @@ export default function SimulatorPage() {
                   )}
                 </div>
                 {txResult.data.device_farm_reason && (
-                  <p className="mt-1 text-[11px] text-slate-650 dark:text-slate-300 font-medium">
+                  <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                     <span className="font-semibold text-slate-400 dark:text-slate-500">Diagnostics:</span> {txResult.data.device_farm_reason}
                   </p>
                 )}
               </div>
             ) : (
-              <p className="font-mono text-red-655 dark:text-red-400">System Classification Error: {txResult.error}</p>
+              <p className="font-mono text-red-600 dark:text-red-400">System Classification Error: {txResult.error}</p>
             )}
           </div>
         )}
