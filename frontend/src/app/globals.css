@@ -4,11 +4,11 @@
   --background: 210 40% 98%;
   --card: 0 0% 100%;
   --foreground: 222.2 47.4% 11.2%;
-  --primary: 221.2 83.2% 53.3%;
+  --primary: 100 50% 68%; /* #A0D585 */
   --destructive: 346.8 77.2% 49.8%;
   --secondary: 210 40% 96.1%;
   --border: 214.3 31.8% 91.4%;
-  --success: 142.1 76.2% 36.3%;
+  --success: 100 50% 68%;
 }
 
 @theme {
@@ -20,6 +20,12 @@
   --color-secondary: hsl(var(--secondary));
   --color-border: hsl(var(--border));
   --color-success: hsl(var(--success));
+
+  /* Custom palette colors requested by user */
+  --color-lime-primary: #A0D585;
+  --color-lime-light: #EEFABD;
+  --color-lime-mint: #C7EABB;
+  --color-lime-pale: #E8F5BD;
 
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);

@@ -129,7 +129,7 @@ const FraudCanvas = () => {
           ctx.strokeStyle = `rgba(239, 68, 68, ${0.1 + intensity * 0.4})`;
           ctx.lineWidth = 1 + intensity * 0.5;
         } else {
-          ctx.strokeStyle = 'rgba(15, 23, 42, 0.06)'; // Barely visible grey lines
+          ctx.strokeStyle = 'rgba(15, 23, 42, 0.05)'; // Subtle dark lines on light background
           ctx.lineWidth = 0.5;
         }
         ctx.stroke();
@@ -165,7 +165,7 @@ const FraudCanvas = () => {
         if (fromNode.isFraud || toNode.isFraud) {
           ctx.fillStyle = '#ef4444'; // alert red
         } else {
-          ctx.fillStyle = 'rgba(15, 23, 42, 0.2)'; // Stark dark grey instead of green
+          ctx.fillStyle = 'rgba(160, 213, 133, 0.45)'; // Soft lime green pulse indicators
         }
         ctx.fill();
       });
@@ -180,7 +180,7 @@ const FraudCanvas = () => {
           ctx.lineWidth = 0.5;
           ctx.stroke();
         } else {
-          ctx.fillStyle = 'rgba(15, 23, 42, 0.05)';
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.04)'; // Subtle node dots on light theme
         }
         ctx.fill();
       });

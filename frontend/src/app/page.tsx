@@ -272,19 +272,19 @@ ${selectedTransaction.is_device_farm_suspected
   };
 
   return (
-    <main className="min-h-screen flex flex-col font-sans select-none antialiased leading-snug bg-slate-50 text-slate-900">
+    <main className="h-full overflow-hidden flex flex-col font-sans select-none antialiased leading-snug bg-slate-50 text-slate-900">
       
       {/* Header - Apple Developer styled top navigation bar */}
-      <header className="border-b border-border bg-card/80 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-50 rounded-none w-full">
+      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-50 rounded-none w-full">
         <div className="flex items-center space-x-2.5">
-          <div className="w-7 h-7 bg-slate-50 border border-border flex items-center justify-center rounded-lg">
+          <div className="w-7 h-7 bg-slate-50 border border-slate-200 flex items-center justify-center rounded-lg">
             <ShieldAlert className="w-4.5 h-4.5 text-slate-800" strokeWidth={1.5} />
           </div>
           <div>
             <h1 className="text-xs font-bold text-slate-900 tracking-tight flex items-center space-x-2 leading-none">
               <span>Real-Time Anomaly Detection</span>
             </h1>
-            <p className="text-[10px] text-slate-500 font-sans mt-0.5">Cross-channel transaction telemetry and risk scoring</p>
+            <p className="text-[10px] text-slate-600 font-sans font-medium mt-0.5">Cross-channel transaction telemetry and risk scoring</p>
           </div>
         </div>
 
@@ -292,12 +292,12 @@ ${selectedTransaction.is_device_farm_suspected
           <button
             onClick={handleSeedData}
             disabled={seeding}
-            className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 bg-white text-slate-700 hover:text-slate-900 text-xs font-medium rounded-md transition duration-150 flex items-center space-x-2 shadow-sm cursor-pointer disabled:opacity-50"
+            className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 bg-white text-slate-705 hover:text-slate-900 text-xs font-medium rounded-md transition duration-150 flex items-center space-x-2 shadow-sm cursor-pointer disabled:opacity-50"
           >
             {seeding ? (
-              <Loader className="w-3.5 h-3.5 animate-spin text-slate-400" strokeWidth={1.5} />
+              <Loader className="w-3.5 h-3.5 animate-spin text-slate-600" strokeWidth={1.5} />
             ) : (
-              <Database className="w-3.5 h-3.5 text-slate-500" strokeWidth={1.5} />
+              <Database className="w-3.5 h-3.5 text-slate-700" strokeWidth={1.5} />
             )}
             <span>Re-seed DB</span>
           </button>
@@ -314,12 +314,12 @@ ${selectedTransaction.is_device_farm_suspected
           {seedMessage && (
             <div className="bg-white border border-slate-200 px-4 py-2.5 text-xs font-sans flex items-center justify-between rounded-lg w-full shadow-sm">
               <div className="flex items-center space-x-2 text-slate-600">
-                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full inline-block"></span>
+                <span className="w-1.5 h-1.5 bg-lime-primary rounded-full inline-block"></span>
                 <span>{seedMessage}</span>
               </div>
               <button 
                 onClick={() => { setSeedMessage(''); }} 
-                className="text-xs text-blue-500 hover:text-blue-600 font-semibold cursor-pointer"
+                className="text-xs text-lime-primary hover:text-lime-mint font-semibold cursor-pointer"
               >
                 Dismiss
               </button>
@@ -327,23 +327,23 @@ ${selectedTransaction.is_device_farm_suspected
           )}
 
           {/* Hero Banner - System Telemetry Overview */}
-          <div className="relative bg-card border border-border px-6 py-6 rounded-xl w-full overflow-hidden min-h-[130px] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+          <div className="relative bg-white border border-slate-200 px-6 py-6 rounded-xl w-full overflow-hidden min-h-[130px] flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
             <div className="relative z-10 space-y-1.5 max-w-xl pointer-events-auto">
               <div className="flex items-center space-x-2">
-                <span className="w-1.5 h-1.5 bg-blue-500 inline-block rounded-full"></span>
-                <span className="text-[9px] font-bold tracking-wider text-slate-500 uppercase">Visual Graph Explainability Engine</span>
+                <span className="w-1.5 h-1.5 bg-lime-primary inline-block rounded-full"></span>
+                <span className="text-[9px] font-bold tracking-wider text-slate-750 uppercase">Visual Graph Explainability Engine</span>
               </div>
               <h2 className="text-sm font-bold text-slate-900 uppercase">System Telemetry Overview</h2>
-              <p className="text-xs text-slate-500 leading-relaxed font-sans">
+              <p className="text-xs text-slate-600 font-medium leading-relaxed font-sans">
                 Observe cross-channel transaction vectors immediately. OmniShield maps device configuration velocities, geolocation mismatches, and complaints directly within the workspace.
               </p>
             </div>
 
             {/* Sparkline Visualization */}
             <div className="w-full md:w-64 bg-slate-50 border border-slate-150 rounded-xl p-3.5 flex flex-col justify-between h-[100px] shrink-0 font-sans relative">
-              <div className="flex items-center justify-between text-[9px] font-bold text-slate-500 uppercase tracking-wider leading-none">
+              <div className="flex items-center justify-between text-[9px] font-bold text-slate-750 uppercase tracking-wider leading-none">
                 <span>Transaction Velocity</span>
-                <span className="text-blue-500 font-mono">Live Ingestion</span>
+                <span className="text-lime-primary font-mono font-bold">Live Ingestion</span>
               </div>
               <div className="h-8 w-full flex items-end mt-1">
                 {(() => {
@@ -369,26 +369,26 @@ ${selectedTransaction.is_device_farm_suspected
                     <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-full overflow-visible">
                       <defs>
                         <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.2" />
-                          <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                          <stop offset="0%" stopColor="#A0D585" stopOpacity="0.2" />
+                          <stop offset="100%" stopColor="#A0D585" stopOpacity="0" />
                         </linearGradient>
                       </defs>
                       <polygon points={fillPoints} fill="url(#sparkline-grad)" />
-                      <polyline points={points} fill="none" stroke="#3b82f6" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+                      <polyline points={points} fill="none" stroke="#A0D585" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
                       <circle 
                         cx={w} 
                         cy={h - ((velocityData[velocityData.length - 1] - minVal) / range) * h} 
                         r={2.5} 
-                        fill="#3b82f6" 
+                        fill="#A0D585" 
                         className="animate-pulse"
                       />
                     </svg>
                   );
                 })()}
               </div>
-              <div className="absolute bottom-1.5 left-3.5 right-3.5 flex justify-between items-center text-xs text-slate-400 font-mono">
+              <div className="absolute bottom-1.5 left-3.5 right-3.5 flex justify-between items-center text-xs text-slate-500 font-mono">
                 <span>T-24s</span>
-                <span className="text-[9px] text-slate-500 font-sans">Current: {velocityData[velocityData.length - 1].toFixed(0)} txn/sec</span>
+                <span className="text-[9px] text-slate-700 font-sans font-medium">Current: {velocityData[velocityData.length - 1].toFixed(0)} txn/sec</span>
                 <span>Now</span>
               </div>
             </div>
@@ -397,57 +397,57 @@ ${selectedTransaction.is_device_farm_suspected
           {/* Statistics Grid (Metric Cards with 1px border, no background colors) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             
-            <div className="border border-border bg-transparent p-5 rounded-xl flex flex-col justify-between h-24">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold leading-none">Suspected Transactions</span>
-              <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
-                  {stats.suspected_transactions}
-                </span>
-                <span className="text-[10px] text-slate-500 font-sans">/ {stats.total_transactions} total</span>
+            <div className="border border-slate-200 bg-white p-5 rounded-xl flex flex-col justify-between h-24 shadow-sm">
+                <span className="text-[10px] uppercase tracking-wider text-slate-750 font-bold leading-none">Suspected Transactions</span>
+                <div className="flex items-baseline space-x-2 mt-2">
+                  <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
+                    {stats.suspected_transactions}
+                  </span>
+                  <span className="text-[10px] text-slate-650 font-sans font-semibold">/ {stats.total_transactions} total</span>
+                </div>
               </div>
-            </div>
 
-            <div className="border border-border bg-transparent p-5 rounded-xl flex flex-col justify-between h-24">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold leading-none">Estimated Fraud Volume</span>
-              <div className="flex items-baseline space-x-1 mt-2">
-                <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
-                  ₹{stats.total_fraud_volume.toLocaleString()}
-                </span>
-                <span className="text-[10px] text-slate-500 uppercase ml-1">INR</span>
+              <div className="border border-slate-200 bg-white p-5 rounded-xl flex flex-col justify-between h-24 shadow-sm">
+                <span className="text-[10px] uppercase tracking-wider text-slate-755 font-bold leading-none">Estimated Fraud Volume</span>
+                <div className="flex items-baseline space-x-1 mt-2">
+                  <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
+                    ₹{stats.total_fraud_volume.toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-slate-655 font-semibold uppercase ml-1">INR</span>
+                </div>
               </div>
-            </div>
 
-            <div className="border border-border bg-transparent p-5 rounded-xl flex flex-col justify-between h-24">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold leading-none">Active Complaints</span>
-              <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
-                  {stats.government_tickets}
-                </span>
-                <span className="text-[10px] text-slate-500 font-sans">Pending reports</span>
+              <div className="border border-slate-200 bg-white p-5 rounded-xl flex flex-col justify-between h-24 shadow-sm">
+                <span className="text-[10px] uppercase tracking-wider text-slate-755 font-bold leading-none">Active Complaints</span>
+                <div className="flex items-baseline space-x-2 mt-2">
+                  <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
+                    {stats.government_tickets}
+                  </span>
+                  <span className="text-[10px] text-slate-655 font-sans font-semibold">Pending reports</span>
+                </div>
               </div>
-            </div>
 
-            <div className="border border-border bg-transparent p-5 rounded-xl flex flex-col justify-between h-24">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold leading-none">Cross-Channel Alerts</span>
-              <div className="flex items-baseline space-x-2 mt-2">
-                <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
-                  {stats.cross_channel_alerts}
-                </span>
-                <span className="text-[10px] text-slate-500 font-sans">Triggered flags</span>
+              <div className="border border-slate-200 bg-white p-5 rounded-xl flex flex-col justify-between h-24 shadow-sm">
+                <span className="text-[10px] uppercase tracking-wider text-slate-755 font-bold leading-none">Cross-Channel Alerts</span>
+                <div className="flex items-baseline space-x-2 mt-2">
+                  <span className="text-2xl font-bold tracking-tight text-slate-900 font-mono leading-none">
+                    {stats.cross_channel_alerts}
+                  </span>
+                  <span className="text-[10px] text-slate-655 font-sans font-semibold">Triggered flags</span>
+                </div>
               </div>
-            </div>
 
           </div>
 
           {/* Data Table */}
-          <div className="border border-border rounded-xl bg-card shadow-sm">
-            <div className="flex items-center justify-between border-b border-border px-5 py-3.5 bg-slate-50/50">
+          <div className="border border-slate-200 rounded-xl bg-white shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5 bg-slate-50/50">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                <Activity className="w-4 h-4 text-slate-500" strokeWidth={1.5} />
+                <Activity className="w-4 h-4 text-slate-700" strokeWidth={1.5} />
                 <span>Real-Time Ingestion Feed</span>
               </h3>
-              <div className="flex items-center space-x-1.5 text-xs text-slate-500 font-medium">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span>
+              <div className="flex items-center space-x-1.5 text-xs text-slate-700 font-semibold">
+                <span className="w-1.5 h-1.5 bg-lime-primary rounded-full inline-block animate-pulse"></span>
                 <span>Operational</span>
               </div>
             </div>
@@ -455,7 +455,7 @@ ${selectedTransaction.is_device_farm_suspected
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
                 <thead>
-                  <tr className="border-b border-border text-slate-500 uppercase text-[10px] tracking-wider bg-slate-50/30">
+                  <tr className="border-b border-slate-200 text-slate-750 uppercase text-[10px] tracking-wider bg-slate-50/30 font-bold">
                     <th className="py-2.5 px-4 font-semibold">Risk Evaluation</th>
                     <th className="py-2.5 px-4 font-semibold font-mono">Transaction ID</th>
                     <th className="py-2.5 px-4 font-semibold font-mono">Sender Account</th>
@@ -488,8 +488,8 @@ ${selectedTransaction.is_device_farm_suspected
                               </>
                             ) : (
                               <>
-                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full inline-block"></span>
-                                <span className="text-green-600 font-medium">Approved</span>
+                                <span className="w-1.5 h-1.5 bg-lime-primary rounded-full inline-block"></span>
+                                <span className="text-slate-800 font-medium">Approved</span>
                               </>
                             )}
                           </div>
@@ -506,7 +506,7 @@ ${selectedTransaction.is_device_farm_suspected
                               {tx.trigger_reason}
                             </span>
                           ) : (
-                            <span className="px-2 py-0.5 bg-emerald-500/5 border border-emerald-500/20 text-emerald-600 text-[9px] font-medium rounded-full uppercase tracking-wider">
+                            <span className="px-2 py-0.5 bg-lime-primary/15 border border-lime-primary/30 text-slate-800 text-[9px] font-medium rounded-full uppercase tracking-wider">
                               {tx.trigger_reason}
                             </span>
                           )}
@@ -529,30 +529,30 @@ ${selectedTransaction.is_device_farm_suspected
           <div className="w-96 border-l border-slate-200 bg-white flex flex-col h-full overflow-y-auto animate-in slide-in-from-right duration-200 shadow-sm z-40">
             <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                <ShieldAlert className="w-4 h-4 text-slate-500" strokeWidth={1.5} />
+                <ShieldAlert className="w-4 h-4 text-slate-700" strokeWidth={1.5} />
                 <span>Inspection Panel</span>
               </h3>
               <button 
                 onClick={handleClosePanel}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 cursor-pointer transition"
+                className="text-slate-500 hover:text-slate-850 p-1 rounded-md hover:bg-slate-100 cursor-pointer transition"
               >
-                <X className="w-4 h-4" strokeWidth={1.5} />
+                <X className="w-4 h-4 text-slate-600" strokeWidth={1.5} />
               </button>
             </div>
 
             <div className="p-5 space-y-5 flex-1">
               <div>
-                <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block mb-1">Transaction ID</span>
+                <span className="text-[9px] uppercase tracking-wider text-slate-550 font-bold block mb-1">Transaction ID</span>
                 <span className="font-mono text-sm font-semibold text-slate-900">{selectedTransaction.id}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block mb-1">Sender</span>
+                  <span className="text-[9px] uppercase tracking-wider text-slate-550 font-bold block mb-1">Sender</span>
                   <span className="font-mono text-xs text-slate-900 block">{selectedTransaction.sender_account}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold block mb-1">Receiver</span>
+                  <span className="text-[9px] uppercase tracking-wider text-slate-550 font-bold block mb-1">Receiver</span>
                   <span className="font-mono text-xs text-slate-900 block">{selectedTransaction.receiver_account}</span>
                 </div>
               </div>
@@ -562,34 +562,34 @@ ${selectedTransaction.is_device_farm_suspected
                 <h4 className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">Extended Telemetry</h4>
                 
                 <div className="flex items-start space-x-2.5">
-                  <Cpu className="w-4 h-4 text-slate-400 mt-0.5" strokeWidth={1.5} />
+                  <Cpu className="w-4 h-4 text-slate-650 mt-0.5" strokeWidth={1.5} />
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-slate-500 block">Device Type</span>
-                    <span className="text-xs text-slate-800 font-sans">{selectedTransaction.device_type}</span>
+                    <span className="text-[9px] uppercase tracking-wider text-slate-700 block">Device Type</span>
+                    <span className="text-xs text-slate-805 font-sans font-medium">{selectedTransaction.device_type}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-2.5">
-                  <MapPin className="w-4 h-4 text-slate-400 mt-0.5" strokeWidth={1.5} />
+                  <MapPin className="w-4 h-4 text-slate-655 mt-0.5" strokeWidth={1.5} />
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-slate-500 block">Ingress Location</span>
-                    <span className="text-xs text-slate-800 font-sans">{selectedTransaction.location}</span>
+                    <span className="text-[9px] uppercase tracking-wider text-slate-700 block">Ingress Location</span>
+                    <span className="text-xs text-slate-805 font-sans font-medium">{selectedTransaction.location}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-2.5">
-                  <Globe className="w-4 h-4 text-slate-400 mt-0.5" strokeWidth={1.5} />
+                  <Globe className="w-4 h-4 text-slate-655 mt-0.5" strokeWidth={1.5} />
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-slate-500 block">IP Address</span>
-                    <span className="text-xs text-slate-800 font-mono font-medium">{selectedTransaction.ip_address}</span>
+                    <span className="text-[9px] uppercase tracking-wider text-slate-700 block">IP Address</span>
+                    <span className="text-xs text-slate-805 font-mono font-medium">{selectedTransaction.ip_address}</span>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-2.5">
-                  <Layers className="w-4 h-4 text-slate-400 mt-0.5" strokeWidth={1.5} />
+                  <Layers className="w-4 h-4 text-slate-655 mt-0.5" strokeWidth={1.5} />
                   <div>
-                    <span className="text-[9px] uppercase tracking-wider text-slate-500 block">Emulator Flags</span>
-                    <span className="text-xs text-slate-800 font-sans">{selectedTransaction.emulator_flags}</span>
+                    <span className="text-[9px] uppercase tracking-wider text-slate-700 block">Emulator Flags</span>
+                    <span className="text-xs text-slate-805 font-sans font-medium">{selectedTransaction.emulator_flags}</span>
                   </div>
                 </div>
               </div>
@@ -599,9 +599,9 @@ ${selectedTransaction.is_device_farm_suspected
                 <button
                   onClick={handleDraftReport}
                   disabled={reportLoading}
-                  className="w-full py-2 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold rounded-lg flex items-center justify-center space-x-2 cursor-pointer transition duration-150"
+                  className="w-full py-2 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold rounded-lg flex items-center justify-center space-x-2 cursor-pointer transition duration-150 font-sans"
                 >
-                  <FileText className="w-4 h-4 text-slate-500" strokeWidth={1.5} />
+                  <FileText className="w-4 h-4 text-slate-700" strokeWidth={1.5} />
                   <span>{reportLoading ? "Assembling ledger context..." : "Draft Report"}</span>
                 </button>
 
@@ -622,7 +622,7 @@ ${selectedTransaction.is_device_farm_suspected
                   <div className="pt-2">
                     <button
                       onClick={() => handleQuickBlock(selectedTransaction.ip_address, 'ip', 'Linked to suspected device farm')}
-                      className="w-full py-2 px-3 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg flex items-center justify-center space-x-2 cursor-pointer transition duration-150"
+                      className="w-full py-2 px-3 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg flex items-center justify-center space-x-2 cursor-pointer transition duration-150 font-sans"
                     >
                       <span>Restrict Source IP</span>
                     </button>
@@ -635,7 +635,7 @@ ${selectedTransaction.is_device_farm_suspected
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card/30 py-3.5 text-center text-[10px] text-slate-500 uppercase tracking-wide">
+      <footer className="border-t border-slate-200 bg-slate-50/30 py-3.5 text-center text-[10px] text-slate-500 uppercase tracking-wide">
         OmniShield &copy; 2026. Risk Assessment & Ingestion Utilities Suite.
       </footer>
     </main>

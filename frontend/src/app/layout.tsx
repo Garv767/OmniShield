@@ -29,9 +29,9 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex bg-background text-foreground font-sans overflow-hidden">
+      <body className="h-screen flex bg-background text-foreground font-sans overflow-hidden">
         <Sidebar />
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
           {children}
         </div>
       </body>

@@ -1,21 +1,25 @@
 # OmniShield 🛡️
+### Full-Stack Fraud Fingerprinting & Cash Routing Network Sandbox
 
-**OmniShield** is a Full-Stack Fraud Fingerprinting & Network Sandbox platform built for a banking hackathon. It ingests multi-channel transaction feeds, evaluates device parameters for velocity and emulator anomalies, maps cash routing graphs, and generates AI-driven compliance reports (SAR) for investigators.
+[![Stack - Next.js 15](https://img.shields.io/badge/Frontend-Next.js%2015-blue?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Stack - FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![Stack - XGBoost](https://img.shields.io/badge/ML%20Engine-XGBoost-F57C00?style=flat-square&logo=xgboost)](https://xgboost.ai/)
+[![Database - SQLite / PostgreSQL](https://img.shields.io/badge/Database-SQLite%20%2F%20PostgreSQL-4479A1?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
 
-![Network Graph](assets/network_graph.png)
+**OmniShield** is a state-of-the-art enterprise fraud mitigation and cash routing sandbox built for banking anomaly detection. It enables risk investigators to ingest multi-channel transaction telemetry, evaluate emulated device farm threat patterns, map relationships using high-fidelity 2D force-directed graphs, and compile AI-driven compliance reports (FinCEN SAR filing standard) on demand.
 
 ---
 
-## 🏗️ Architecture & Flow
+## 🏗️ Architecture & Data Ingestion Flow
 
 ```mermaid
 graph TD
     A[Real-time Transactions JSON] -->|POST /api/transactions| B(FastAPI Server)
-    C[Gov Cyber Tickets CSV] -->|POST /api/upload-government-tickets| B
+    C[Gov Cyber Complaints CSV] -->|POST /api/upload-government-tickets| B
     D[Cross-Channel Alerts JSON] -->|POST /api/alerts| B
     I[Mule Accounts Dataset] -->|Google Colab Training| J[mule_model.pkl]
     
-    B -->|SQLModel ORM| E[(SQLite Database)]
+    B -->|SQLModel ORM| E[(SQLite / DB)]
     B -->|Rule Engine| F[detector.py Heuristics]
     B -->|LangChain Prompt| G[llm.py SAR Compiler]
     B -->|XGBoost Model| K[mule_classifier.py Inference]
@@ -30,56 +34,45 @@ graph TD
 
 ---
 
-## 🚀 Key Features
+## 🚀 Core Platform Features
 
-### 1. Multi-Feed Data Ingestion
-* **Real-time Transactions**: Receives telemetry data (IP, fingerprint, login timestamps) alongside transaction payloads.
-* **Government CSV Tickets**: Upload static list of cyber complaints from state authorities, automatically matching and linking to user nodes.
-* **Cross-Channel Security Alerts**: Tracks contextual exceptions (e.g. failed password counts, geo-location hops).
+### 1. Multi-Feed Ingest Infrastructure
+* **Real-time Ingestion Pipeline**: Receives hardware profiles, network locations, and login velocities alongside money transfer streams.
+* **Cyber complaint CSV Upload**: Support for standard local cyber crime registries (CSV) to retroactively match transaction logs and map suspected targets.
+* **Cross-Channel Exception Engine**: Tracks background changes (e.g. rapid password failures, geolocation hops).
 
-### 2. Heuristic Behavioral Fingerprinting (`detector.py`)
-* **IP Velocity Check**: Detects if multiple unique account IDs execute money transfers from the exact same IP address or hardware fingerprint within a 5-minute window.
-* **Retroactive Flagging**: When a velocity check triggers, the system retroactively updates previous clean transactions within the 5-minute window to flag the entire chain.
-* **Emulator Bot Check**: Analyzes "Time-to-Transfer" (latency between login and execution). Latencies under `2.0 seconds` trigger automated emulator flags.
+### 2. Behavioral Threat Profiler (`detector.py`)
+* **IP Ingress Velocity Rules**: Detects if multiple unique account IDs execute money transfers from the exact same IP address or hardware fingerprint within a 5-minute window.
+* **Retroactive Contagion Flagging**: Once a threat is validated, the system cascades the risk state to prior clean transfers within the time window.
+* **Emulator Bot Check**: Identifies "Time-to-Transfer" (latency between login and transaction trigger). Latencies under `2.0 seconds` trigger automated emulator flags.
 
-### 3. Interactive Network Sandbox
-* **Visual Graph**: An interactive canvas-based 2D force-directed node graph representing accounts (nodes) and cash flows (links).
-* **Dynamic Node Coloring**:
-  - **Teal**: Normal active accounts.
-  - **Red**: Suspected Device Farm accounts.
-  - **Orange**: Government cyber ticket matches.
-  - **Blue**: Cross-Channel alerts.
-  - **Pink**: Current selection under investigation.
-* **Quick Select**: Dropdown target lock-on to select nodes instantly and bypass canvas click boundaries.
+### 3. Interactive Network Investigation Sandbox
+* **2D Canvas Graph Visualization**: An interactive, responsive canvas rendering accounts (nodes) and transfer directions (directional link paths).
+* **Node Color Key**:
+  * <span style="color:#0d9488">●</span> **Teal**: Normal active accounts.
+  * <span style="color:#ef4444">●</span> **Red**: Suspected automated Device Farm accounts / Cyber complaints.
+  * <span style="color:#3b82f6">●</span> **Blue**: Currently selected investigator focus target.
+* **Quick Target Lock**: Interactive dropdown controls in the side panel to instantly select nodes without clicking.
 
-### 4. AI-Driven Compliance Compiler (SAR)
-* Queries database context (linked alerts, velocity details, money flows) and compiles a professional 3-paragraph **Suspicious Activity Report (SAR)** following FinCEN compliance guidelines.
-* Supported by **LangChain** utilizing OpenAI/Gemini APIs, with a high-fidelity template-based generator fallback for offline use.
+### 4. Generative AI Compliance Compiler (SAR)
+* Automatically extracts full relational database context (risk scores, complaints, velocities, and flows).
+* Leverages **LangChain** to compile a professional, multi-paragraph **Suspicious Activity Report (SAR)** conforming to FinCEN compliance filing standards.
+* Embedded template fallback ensures full operational continuity if remote LLM models are offline.
 
-### 5. Explainable AI (XAI) Mule Classifier (Problem Statement 2)
-* **High-Accuracy Classification**: Trains an XGBoost Classifier on 3,924 anonymized features to predict suspicious money mule activities (under target label `F3924`).
-* **Categorical & Missing Value Handling**: Natively handles missing values (NaNs) and automatically handles category columns (e.g. Account Type, Occupation, Gender) during training and real-time prediction.
-* **Explainable AI (XAI) Dashboard**: Deconstructs the "black box" prediction, highlighting the top 10 most influential features contributing to a specific account's risk score using visual feature importance charts.
-* **Dynamic Testing Sample**: Instantly pulls random, real rows from the dataset via the `/api/ml-sample` endpoint to test prediction workflows on the fly.
+### 5. Explainable AI (XAI) Mule Classifier
+* **High-Dimensional Inference**: Trained on a dataset with over 3,900 features predicting mule activities (ground truth labeled in `F3924`).
+* **Explainable AI (XAI) Dashboard**: Deconstructs predictive weights to plot the top 10 most influential features contributing to a specific prediction.
+* **Dynamic Dataset Testing**: Instantly loads real random test vectors from the training set via the `/api/ml-sample` endpoint to test classifier performance.
 
 ---
 
-## 🛠️ Tech Stack
-
-* **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind CSS, `react-force-graph-2d`, Lucide React, Recharts (for XAI visualization)
-* **Backend**: FastAPI (Python), SQLModel, **XGBoost, scikit-learn, joblib** (ML Pipeline)
-* **Database**: SQLite (local fallback) / PostgreSQL compatible
-* **AI/LLM**: LangChain, python-dotenv
-
----
-
-## 💻 Getting Started (Local Run)
+## 💻 Local Quickstart
 
 ### Prerequisites
 * Python 3.10+
 * Node.js v18+ & npm
 
-### 1. Set Up Backend (FastAPI)
+### 1. Backend Service Configuration (FastAPI)
 1. Navigate to the backend directory:
    ```bash
    cd backend
@@ -99,22 +92,22 @@ graph TD
    ```bash
    pip install -r requirements.txt
    ```
-4. Start the API server:
+4. Start the server:
    ```bash
    uvicorn app.main:app --port 8000 --reload
    ```
-   *The Swagger interactive docs will be available at `http://localhost:8000/docs`.*
+   *The Swagger interactive documentation will be hosted at `http://localhost:8000/docs`.*
 
-### 2. Set Up Frontend (Next.js)
+### 2. Frontend client configuration (Next.js)
 1. Navigate to the frontend directory:
    ```bash
    cd ../frontend
    ```
-2. Install npm packages:
+2. Install dependencies:
    ```bash
    npm install
    ```
-3. Run the Next.js development server:
+3. Launch development server:
    ```bash
    npm run dev
    ```
@@ -122,39 +115,21 @@ graph TD
 
 ---
 
-## 🧠 ML Model Training & Setup
+## 🧠 Model Training Workflow
 
-Since the dataset is 116MB and contains thousands of features, we train the full XGBoost model on **Google Colab** and deploy the resulting binary locally.
+The XGBoost model binary is trained and deployed locally using standard pipelines.
 
-### 1. Training the Model on Google Colab
-1. Create a new notebook on Google Colab.
-2. Clone the repository inside your notebook:
-   ```python
-   !git clone https://github.com/Garv767/OmniShield.git
-   %cd OmniShield
+1. Train the classifier using local dataset resources:
+   ```bash
+   python backend/train_model.py --data DataSet.csv --output backend/app/mule_model.pkl
    ```
-3. Upload `DataSet.csv` into the `OmniShield` directory in Colab (or copy it from Google Drive).
-4. Run the training script:
-   ```python
-   !python backend/train_model.py --data DataSet.csv --output backend/app/mule_model.pkl
-   ```
-5. Download the generated `mule_model.pkl` file from the Colab file manager (`OmniShield/backend/app/mule_model.pkl`).
-6. Place the file in your local directory at `backend/app/mule_model.pkl`.
-
-### 2. Rerunning locally
-* The FastAPI backend automatically loads `backend/app/mule_model.pkl` on startup. 
-* Run your uvicorn command, and it will confirm: `Successfully loaded ML model from app/mule_model.pkl`.
+2. The FastAPI backend automatically reads `mule_model.pkl` on startup.
 
 ---
 
-## 🧪 Simulation & Testing
+## 🧪 Simulation and Seeding
 
-To seed the database with a pre-configured multi-channel scenario (velocity flags, emulator triggers, government tickets, and alerts):
+To quickly populate the database with complex multi-channel scenarios (velocity flags, emulator triggers, government tickets, and alerts):
 
-1. Run the backend test suite:
-   ```bash
-   cd backend
-   .\venv\Scripts\python.exe test_endpoints.py
-   ```
-2. Alternatively, click the **"Seed Demo Data"** button in the header of the frontend landing dashboard (`http://localhost:3000`).
-3. Navigate to the **ML Analysis** tab in the sidebar to test the Explainable AI (XAI) predictions by loading random samples from the dataset.
+* Click the **"Re-seed DB"** button in the header navigation of the landing dashboard page (`http://localhost:3000`).
+* Navigate to the **ML Analysis** or **Graph Workspace** tabs in the sidebar to test predictions and visualize relationship graphs.

@@ -69,16 +69,16 @@ export default function BlocklistPage() {
   };
 
   return (
-    <div className="p-8 h-full flex flex-col space-y-6 font-sans">
+    <div className="p-8 h-full flex flex-col space-y-6 font-sans bg-slate-50 text-slate-900 overflow-y-auto">
       <h1 className="text-sm font-bold text-slate-900">Security Blocklist Registry</h1>
 
       <div className="bg-white p-6 border border-slate-200 rounded-xl flex-1 flex flex-col min-h-0 shadow-sm">
         <div className="mb-6 space-y-1.5">
           <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-            <AlertOctagon className="w-4 h-4 text-slate-400" strokeWidth={1.5} />
+            <AlertOctagon className="w-4 h-4 text-slate-700" strokeWidth={1.5} />
             <span>Active Restrictions</span>
           </h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
+          <p className="text-xs text-slate-600 leading-relaxed font-medium">
             Manage restricted IP addresses and device fingerprints to proactively drop automated connections.
           </p>
         </div>
@@ -87,53 +87,53 @@ export default function BlocklistPage() {
           <select
             value={newBlockType}
             onChange={(e) => setNewBlockType(e.target.value)}
-            className="bg-slate-50 text-xs text-slate-800 px-3 py-2 border border-slate-200 focus:border-blue-500 focus:outline-none rounded-lg cursor-pointer"
+            className="bg-white text-xs text-slate-800 px-3 py-2 border border-slate-200 focus:border-lime-primary focus:outline-none rounded-lg cursor-pointer"
           >
-            <option value="ip">IP Address</option>
-            <option value="fingerprint">Fingerprint</option>
+            <option value="ip" className="bg-white">IP Address</option>
+            <option value="fingerprint" className="bg-white">Fingerprint</option>
           </select>
           <input
             type="text"
             placeholder="Enter IP or fingerprint token..."
             value={newBlockValue}
             onChange={(e) => setNewBlockValue(e.target.value)}
-            className="flex-1 bg-slate-50 border border-slate-200 focus:border-blue-500 text-xs font-mono text-slate-900 px-4 py-2 focus:outline-none rounded-lg"
+            className="flex-1 bg-white border border-slate-200 focus:border-lime-primary text-xs font-mono text-slate-900 px-4 py-2 focus:outline-none rounded-lg"
           />
           <button
             type="submit"
             disabled={blockSubmitting}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold text-xs px-4 py-2 rounded-lg transition disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
+            className="bg-lime-primary hover:bg-lime-primary/90 text-slate-900 font-bold text-xs px-4 py-2 rounded-lg transition disabled:opacity-50 flex items-center justify-center space-x-2 cursor-pointer shadow-sm"
           >
-            <Plus className="w-4 h-4" strokeWidth={1.5} />
+            <Plus className="w-4 h-4 text-slate-900" strokeWidth={1.5} />
             <span>Add Restriction</span>
           </button>
         </form>
 
         {blockMessage && (
-          <div className="mb-4 p-3 bg-blue-500/5 border border-blue-500/20 text-blue-700 text-xs rounded-lg">
+          <div className="mb-4 p-3 bg-lime-primary/10 border border-lime-primary/20 text-lime-primary text-xs rounded-lg">
             {blockMessage}
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto border border-slate-200 bg-slate-50/20 rounded-lg min-h-0">
+        <div className="flex-1 overflow-y-auto border border-slate-200 bg-white rounded-lg min-h-0">
           <table className="w-full text-xs text-left">
-            <thead className="sticky top-0 bg-slate-50 z-10 border-b border-slate-200">
-              <tr className="text-slate-500 text-[10px] uppercase tracking-wider font-semibold">
+            <thead className="sticky top-0 bg-slate-55 z-10 border-b border-slate-200">
+              <tr className="text-slate-750 bg-slate-50 text-[10px] uppercase tracking-wider font-semibold">
                 <th className="px-4 py-3">Type</th>
                 <th className="px-4 py-3 font-mono">Value</th>
                 <th className="px-4 py-3">Reasoning</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 text-slate-700">
+            <tbody className="divide-y divide-slate-100 text-slate-700">
               {blocklist.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-4 py-8 text-center text-slate-500 uppercase tracking-wider text-[10px] font-semibold">
+                  <td colSpan={3} className="px-4 py-8 text-center text-slate-400 uppercase tracking-wider text-[10px] font-semibold">
                     No restricted registry entries found.
                   </td>
                 </tr>
               ) : (
                 blocklist.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={idx} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3 font-bold text-slate-500 uppercase text-[10px] w-32">{item.type}</td>
                     <td className="px-4 py-3 font-mono text-slate-900 font-semibold">{item.value}</td>
                     <td className="px-4 py-3 text-slate-600">{item.reason}</td>

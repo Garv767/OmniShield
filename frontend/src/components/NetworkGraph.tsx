@@ -56,7 +56,6 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
 
   useEffect(() => {
     if (fgRef.current && data.nodes.length > 0 && dimensions.width > 0) {
-      // Small timeout to allow ForceGraph internal layout to catch up to dimensions
       setTimeout(() => {
         if (fgRef.current) {
           fgRef.current.centerAt(0, 0, 0);
@@ -70,19 +69,19 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
     const isSelected = selectedAccountId === node.id;
     if (isSelected) return '#3b82f6'; // System Blue
     if (node.is_device_farm_suspected || node.is_cyber_flagged || node.is_alert_flagged) {
-      return '#ef4444'; // Modern Red for Anomalies
+      return '#ef4444'; // Red for anomalies
     }
-    return '#64748b'; // Slate-500 Neutral Slate
+    return '#0d9488'; // Teal for clean/normal accounts
   };
 
   return (
     <div className="w-full h-full bg-slate-50 relative">
       
-      <div className="absolute bottom-4 right-4 z-10 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-[9px] text-slate-500 pointer-events-none font-mono tracking-wider">
+      <div className="absolute bottom-4 right-4 z-10 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-[9px] text-slate-500 pointer-events-none font-mono tracking-wider shadow-sm">
         DRAG TO PAN | SCROLL TO ZOOM | CLICK NODE TO PROFILE
       </div>
 
-      <div ref={containerRef} className="w-full h-full min-h-[600px] flex items-center justify-center bg-slate-50/50 overflow-hidden">
+      <div ref={containerRef} className="w-full h-full min-h-[450px] flex items-center justify-center bg-slate-50 overflow-hidden">
         {data.nodes.length === 0 || dimensions.width === 0 ? (
           <div className="text-slate-400 text-xs font-mono uppercase tracking-wider">
             {data.nodes.length === 0 ? "No transaction network data loaded" : "Calculating layout..."}
@@ -134,7 +133,7 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
                 const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.4);
                 
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.03)';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
                 ctx.shadowBlur = 4;
                 ctx.fillRect(
                   node.x - bckgDimensions[0] / 2,
@@ -153,7 +152,7 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
                 );
                 
                 ctx.shadowBlur = 0;
-
+ 
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = '#0f172a';
