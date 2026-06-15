@@ -35,12 +35,17 @@ interface NetworkGraphProps {
   };
   onNodeClick: (node: GraphNode) => void;
   selectedAccountId?: string | null;
+  loading?: boolean;
 }
 
-export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: NetworkGraphProps) {
+import { useTheme } from '@/context/ThemeContext';
+
+export default function NetworkGraph({ data, onNodeClick, selectedAccountId, loading }: NetworkGraphProps) {
   const fgRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -54,16 +59,22 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
     return () => observer.disconnect();
   }, []);
 
+  const prevLoadingRef = useRef(false);
   useEffect(() => {
-    if (fgRef.current && data.nodes.length > 0 && dimensions.width > 0) {
+    const hasData = data.nodes.length > 0;
+    const finishedLoading = prevLoadingRef.current && !loading;
+    const initialLoad = !prevLoadingRef.current && !loading && hasData && fgRef.current;
+    
+    if ((finishedLoading || initialLoad) && fgRef.current && dimensions.width > 0) {
       setTimeout(() => {
         if (fgRef.current) {
           fgRef.current.centerAt(0, 0, 0);
           fgRef.current.zoomToFit(400, 50);
         }
-      }, 50);
+      }, 100);
     }
-  }, [data, dimensions]);
+    prevLoadingRef.current = !!loading;
+  }, [loading, data.nodes.length, dimensions.width]);
 
   const getNodeColor = (node: GraphNode) => {
     const isSelected = selectedAccountId === node.id;
@@ -75,15 +86,15 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
   };
 
   return (
-    <div className="w-full h-full bg-slate-50 relative">
+    <div className="w-full h-full bg-slate-50 dark:bg-slate-950 relative">
       
-      <div className="absolute bottom-4 right-4 z-10 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-[9px] text-slate-500 pointer-events-none font-mono tracking-wider shadow-sm">
+      <div className="absolute top-4 right-4 z-10 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-[9px] text-slate-500 dark:text-slate-400 pointer-events-none font-mono tracking-wider shadow-sm">
         DRAG TO PAN | SCROLL TO ZOOM | CLICK NODE TO PROFILE
       </div>
 
-      <div ref={containerRef} className="w-full h-full min-h-[450px] flex items-center justify-center bg-slate-50 overflow-hidden">
+      <div ref={containerRef} className="w-full h-full min-h-[450px] flex items-center justify-center bg-slate-50 dark:bg-slate-950 overflow-hidden">
         {data.nodes.length === 0 || dimensions.width === 0 ? (
-          <div className="text-slate-400 text-xs font-mono uppercase tracking-wider">
+          <div className="text-slate-400 dark:text-slate-650 text-xs font-mono uppercase tracking-wider">
             {data.nodes.length === 0 ? "No transaction network data loaded" : "Calculating layout..."}
           </div>
         ) : (
@@ -97,7 +108,7 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
             nodeVal={(node: any) => node.val || 2}
             nodeRelSize={4}
             linkWidth={(link: any) => (link.is_device_farm_suspected ? 2.5 : 1.2)}
-            linkColor={(link: any) => (link.is_device_farm_suspected ? '#ef4444' : '#cbd5e1')}
+            linkColor={(link: any) => (link.is_device_farm_suspected ? '#ef4444' : (isDark ? '#334155' : '#cbd5e1'))}
             linkDirectionalArrowLength={4.5}
             linkDirectionalArrowRelPos={0.95}
             linkDirectionalParticles={(link: any) => (link.is_device_farm_suspected ? 4 : 1)}
@@ -132,8 +143,8 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
                 const textWidth = ctx.measureText(label).width;
                 const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.4);
                 
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.1)';
+                ctx.fillStyle = isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
                 ctx.shadowBlur = 4;
                 ctx.fillRect(
                   node.x - bckgDimensions[0] / 2,
@@ -142,7 +153,7 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
                   bckgDimensions[1]
                 );
                 
-                ctx.strokeStyle = '#cbd5e1';
+                ctx.strokeStyle = isDark ? '#334155' : '#cbd5e1';
                 ctx.lineWidth = 0.5 / globalScale;
                 ctx.strokeRect(
                   node.x - bckgDimensions[0] / 2,
@@ -155,7 +166,7 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId }: N
  
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillStyle = '#0f172a';
+                ctx.fillStyle = isDark ? '#f8fafc' : '#0f172a';
                 ctx.fillText(label, node.x, node.y - 14);
               }
             }}
