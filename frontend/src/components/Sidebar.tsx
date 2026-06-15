@@ -23,7 +23,7 @@ const Sidebar = () => {
     <aside className="w-60 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/80 dark:backdrop-blur-md flex flex-col h-full sticky top-0 font-sans select-none shadow-sm shadow-slate-100/30 transition-colors duration-200">
       <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center space-x-2.5">
         <div className="w-7 h-7 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center rounded-lg shrink-0">
-          <ShieldAlert className="w-4 h-4 text-slate-700 dark:text-slate-350 fill-slate-100/50 dark:fill-slate-850/50 animate-none" strokeWidth={1.5} />
+          <ShieldAlert className="w-4 h-4 text-slate-700 dark:text-slate-300 fill-slate-100/50 dark:fill-slate-800/50 animate-none" strokeWidth={1.5} />
         </div>
         <div className="overflow-hidden">
           <h1 className="text-xs font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-none uppercase">
@@ -45,7 +45,7 @@ const Sidebar = () => {
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50 hover:text-slate-800 dark:hover:text-slate-100'
               }`}
             >
-              <span className={isActive ? 'text-slate-800 dark:text-lime-primary' : 'text-slate-550 dark:text-slate-500'}>
+              <span className={isActive ? 'text-slate-800 dark:text-lime-primary' : 'text-slate-500 dark:text-slate-400'}>
                 {link.icon}
               </span>
               <span className="tracking-wide">{link.name}</span>

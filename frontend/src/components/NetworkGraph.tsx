@@ -94,7 +94,7 @@ export default function NetworkGraph({ data, onNodeClick, selectedAccountId, loa
 
       <div ref={containerRef} className="w-full h-full min-h-[450px] flex items-center justify-center bg-slate-50 dark:bg-slate-950 overflow-hidden">
         {data.nodes.length === 0 || dimensions.width === 0 ? (
-          <div className="text-slate-400 dark:text-slate-650 text-xs font-mono uppercase tracking-wider">
+          <div className="text-slate-400 dark:text-slate-500 text-xs font-mono uppercase tracking-wider">
             {data.nodes.length === 0 ? "No transaction network data loaded" : "Calculating layout..."}
           </div>
         ) : (

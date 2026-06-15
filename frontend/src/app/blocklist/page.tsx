@@ -117,7 +117,7 @@ export default function BlocklistPage() {
 
         <div className="flex-1 overflow-y-auto border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 rounded-lg min-h-0">
           <table className="w-full text-xs text-left">
-            <thead className="sticky top-0 bg-slate-55 dark:bg-slate-900 z-10 border-b border-slate-200 dark:border-slate-800">
+            <thead className="sticky top-0 bg-slate-50 dark:bg-slate-900 z-10 border-b border-slate-200 dark:border-slate-800">
               <tr className="text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/80 text-[10px] uppercase tracking-wider font-semibold">
                 <th className="px-4 py-3">Type</th>
                 <th className="px-4 py-3 font-mono">Value</th>
@@ -127,7 +127,7 @@ export default function BlocklistPage() {
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
               {blocklist.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-4 py-8 text-center text-slate-450 uppercase tracking-wider text-[10px] font-semibold">
+                  <td colSpan={3} className="px-4 py-8 text-center text-slate-400 uppercase tracking-wider text-[10px] font-semibold">
                     No restricted registry entries found.
                   </td>
                 </tr>
@@ -136,7 +136,7 @@ export default function BlocklistPage() {
                   <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
                     <td className="px-4 py-3 font-bold text-slate-500 dark:text-slate-400 uppercase text-[10px] w-32">{item.type}</td>
                     <td className="px-4 py-3 font-mono text-slate-900 dark:text-slate-100 font-semibold">{item.value}</td>
-                    <td className="px-4 py-3 text-slate-600 dark:text-slate-450">{item.reason}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">{item.reason}</td>
                   </tr>
                 ))
               )}
