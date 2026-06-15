@@ -13,6 +13,8 @@ class TransactionCreate(BaseModel):
     amount: float = Field(gt=0, description="Amount must be greater than zero")
     timestamp: datetime
     device_metadata: DeviceMetadataSchema
+    profile_class: Optional[str] = None  # "legitimate" or "mule"
+    features: Optional[dict] = None      # direct feature vector if any
 
 class TransactionResponse(BaseModel):
     id: int
@@ -26,6 +28,8 @@ class TransactionResponse(BaseModel):
     time_to_transfer_seconds: float
     is_device_farm_suspected: bool
     device_farm_reason: Optional[str]
+    mule_probability: Optional[float] = None
+    feature_vector_json: Optional[str] = None
 
     class Config:
         from_attributes = True

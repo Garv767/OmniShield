@@ -1,5 +1,6 @@
 import io
 import csv
+import json
 from datetime import datetime, timedelta
 from typing import List, Optional
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, BackgroundTasks
@@ -13,9 +14,22 @@ from app.schemas import (
 )
 from app.detector import evaluate_transaction
 from app.llm import generate_suspicious_activity_report
-from app.mule_classifier import load_model, predict_mule_score, get_random_test_sample
+from app.mule_classifier import load_model, predict_mule_score, get_random_test_sample, get_sample_by_class
 
 app = FastAPI(title="OmniShield Fraud Detection API", version="1.0.0")
+
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+def global_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": str(exc),
+            "traceback": traceback.format_exc()
+        }
+    )
 
 # Enable CORS for Next.js frontend
 app.add_middleware(
@@ -54,9 +68,56 @@ def ingest_transaction(tx_in: TransactionCreate, db: Session = Depends(get_sessi
             new_prof = UserProfile(account_id=acc, name=f"Mock User {acc[-4:] if len(acc) > 4 else acc}", email=f"{acc}@bank-mock.com")
             db.add(new_prof)
     
-    # 2. Run heuristics
-    is_device_farm, time_to_transfer, reason = evaluate_transaction(db, tx_in)
+    # 2. Get feature vector and run ML model
+    features_dict = None
+    if tx_in.features:
+        features_dict = tx_in.features
+    else:
+        # Sample based on requested profile_class
+        p_class = tx_in.profile_class or "legitimate"
+        try:
+            sample = get_sample_by_class(p_class)
+            features_dict = sample["features"]
+        except Exception:
+            # Fallback to random test sample
+            try:
+                sample = get_random_test_sample()
+                features_dict = sample["features"]
+            except Exception:
+                features_dict = {}
+
+    mule_prob = 0.0
+    is_mule = False
+    top_features = []
     
+    if features_dict:
+        try:
+            ml_res = predict_mule_score(features_dict)
+            mule_prob = ml_res["mule_probability"]
+            is_mule = ml_res["is_suspicious"]
+            top_features = ml_res["top_contributing_features"]
+        except Exception as e:
+            print(f"ML evaluation failed: {e}")
+
+    # Heuristic fallback/addition
+    heur_suspected, time_to_transfer, heur_reason = evaluate_transaction(db, tx_in)
+
+    is_device_farm = is_mule or heur_suspected
+    
+    # Format reason with top contributing features
+    reasons_list = []
+    if heur_suspected and heur_reason:
+        reasons_list.append(heur_reason)
+    
+    if is_mule:
+        top_f_strings = [f"{f['feature']} (val: {f['value']})" for f in top_features[:2]]
+        reasons_list.append(f"ML Score: {(mule_prob*100):.1f}% Mule Probability. Key features: {', '.join(top_f_strings)}")
+    
+    if reasons_list:
+        reason = " | ".join(reasons_list)
+    else:
+        reason = f"ML Score: {(mule_prob*100):.1f}% Mule Probability. Behaviors consistent with legitimate profiles."
+
     # 3. Create database entry
     db_tx = Transaction(
         sender_account=tx_in.sender_account,
@@ -68,7 +129,9 @@ def ingest_transaction(tx_in: TransactionCreate, db: Session = Depends(get_sessi
         login_time=tx_in.device_metadata.login_time,
         time_to_transfer_seconds=time_to_transfer,
         is_device_farm_suspected=is_device_farm,
-        device_farm_reason=reason
+        device_farm_reason=reason,
+        mule_probability=mule_prob,
+        feature_vector_json=json.dumps(features_dict) if features_dict else None
     )
     
     db.add(db_tx)
@@ -362,6 +425,32 @@ def get_account_risk_profile(account_id: str, db: Session = Depends(get_session)
         status=tickets_status
     ))
 
+    # 6. ML Ensemble Classification Risk (Max 100)
+    ml_contrib = 0.0
+    ml_msg = "No transaction anomalies flagged by the ensemble ML model."
+    ml_status = "CLEAN"
+    
+    mule_txs = [t for t in txs if t.sender_account == account_id and t.mule_probability is not None]
+    if mule_txs:
+        max_prob = max(t.mule_probability for t in mule_txs)
+        ml_contrib = max_prob * 100.0
+        if max_prob > 0.8:
+            ml_status = "CRITICAL"
+            ml_msg = f"ML Model Alert: Account has transaction flagged with extremely high risk ({(max_prob*100):.1f}% Mule Probability)."
+        elif max_prob > 0.5:
+            ml_status = "WARNING"
+            ml_msg = f"ML Model Warning: Account has transaction flagged with moderate risk ({(max_prob*100):.1f}% Mule Probability)."
+        else:
+            ml_status = "CLEAN"
+            ml_msg = f"ML Model Clean: Highest transaction risk score is low ({(max_prob*100):.1f}% Mule Probability)."
+            
+    factors.append(RiskFactor(
+        name="ML Ensemble Classification Risk",
+        description=ml_msg,
+        contribution=ml_contrib,
+        status=ml_status
+    ))
+
     # 5. Telemetry Blocklist Matches (Max 50)
     blocklist_contrib = 0.0
     blocklist_msg = "Device telemetry (IP and fingerprint) is currently clean."
@@ -392,7 +481,7 @@ def get_account_risk_profile(account_id: str, db: Session = Depends(get_session)
         status=blocklist_status
     ))
 
-    total_score = velocity_contrib + emulator_contrib + alerts_contrib + tickets_contrib + blocklist_contrib
+    total_score = velocity_contrib + emulator_contrib + alerts_contrib + tickets_contrib + blocklist_contrib + ml_contrib
     overall_score = min(100.0, total_score)
     
     if user.is_frozen:
@@ -519,7 +608,6 @@ def get_blocklist(db: Session = Depends(get_session)):
 @app.post("/api/seed-mock-data")
 def seed_mock_data(db: Session = Depends(get_session)):
     # 1. Clear existing database rows (for clean reseed if desired)
-    db.exec(select(Transaction)).all() # triggers loading
     SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
     
@@ -549,73 +637,60 @@ def seed_mock_data(db: Session = Depends(get_session)):
     
     now = datetime.utcnow()
     
-    # 3. Seed Transactions
-    # Normal transaction flow
-    db.add(Transaction(
-        sender_account="ACC_001", receiver_account="ACC_002", amount=150.00,
-        timestamp=now - timedelta(hours=10), ip_address="192.168.1.50",
-        device_fingerprint="device_iphone_12_normal", login_time=now - timedelta(hours=10, minutes=5),
-        time_to_transfer_seconds=300.0, is_device_farm_suspected=False
-    ))
+    # 3. Seed Transactions with ML vectors
+    tx_configs = [
+        # (sender, receiver, amount, hours_ago, ip, fingerprint, login_delta, is_mule)
+        ("ACC_001", "ACC_002", 450.00, 10, "192.168.1.50", "device_iphone_12_normal", 5, False),
+        ("ACC_003", "ACC_002", 5000.00, 8, "203.0.113.12", "device_macbook_pro_normal", 10, False),
+        ("ACC_001", "ACC_002", 150.00, 6, "192.168.1.50", "device_iphone_12_normal", 3, False),
+        ("ACC_002", "ACC_003", 1200.00, 5, "192.168.1.11", "device_desktop_chrome", 7, False),
+        ("ACC_003", "ACC_001", 300.00, 4, "203.0.113.12", "device_macbook_pro_normal", 4, False),
+        # Mules
+        ("ACC_007", "ACC_002", 850.00, 2, "198.51.100.8", "device_emulator_android_x86", 1, True),
+        ("ACC_004", "ACC_002", 1200.00, 1, "198.51.100.22", "df_fingerprint_xyz", 2, True),
+        ("ACC_005", "ACC_002", 950.00, 0.5, "198.51.100.22", "df_fingerprint_xyz", 2, True)
+    ]
     
-    db.add(Transaction(
-        sender_account="ACC_003", receiver_account="ACC_002", amount=5000.00,
-        timestamp=now - timedelta(hours=5), ip_address="203.0.113.12",
-        device_fingerprint="device_macbook_pro_normal", login_time=now - timedelta(hours=5, minutes=10),
-        time_to_transfer_seconds=600.0, is_device_farm_suspected=False
-    ))
-    
-    # Emulator Check Trigger: login to transfer < 2s
-    db.add(Transaction(
-        sender_account="ACC_007", receiver_account="ACC_002", amount=850.00,
-        timestamp=now - timedelta(hours=2), ip_address="198.51.100.8",
-        device_fingerprint="device_emulator_android_x86", login_time=now - timedelta(hours=2) - timedelta(milliseconds=750),
-        time_to_transfer_seconds=0.75, is_device_farm_suspected=True,
-        device_farm_reason="Time-to-transfer is ultra-fast: 0.75s (< 2s)"
-    ))
-    
-    # Device Farm Trigger (Velocity check: multiple unique accounts on same IP within 5 mins)
-    # Target details: same IP "198.51.100.22", same fingerprint "df_fingerprint_xyz"
-    db.add(Transaction(
-        sender_account="ACC_004", receiver_account="ACC_002", amount=1200.00,
-        timestamp=now - timedelta(minutes=4), ip_address="198.51.100.22",
-        device_fingerprint="df_fingerprint_xyz", login_time=now - timedelta(minutes=4, seconds=45),
-        time_to_transfer_seconds=45.0, is_device_farm_suspected=False
-    ))
-    # This one will trigger the velocity check because ACC_005 is different from ACC_004 on same telemetry
-    is_df_2, ttt_2, reason_2 = evaluate_transaction(db, TransactionCreate(
-        sender_account="ACC_005", receiver_account="ACC_002", amount=950.00,
-        timestamp=now - timedelta(minutes=3), device_metadata={
-            "ip_address": "198.51.100.22",
-            "device_fingerprint": "df_fingerprint_xyz",
-            "login_time": (now - timedelta(minutes=3, seconds=30))
-        }
-    ))
-    db.add(Transaction(
-        sender_account="ACC_005", receiver_account="ACC_002", amount=950.00,
-        timestamp=now - timedelta(minutes=3), ip_address="198.51.100.22",
-        device_fingerprint="df_fingerprint_xyz", login_time=now - timedelta(minutes=3, seconds=30),
-        time_to_transfer_seconds=30.0, is_device_farm_suspected=is_df_2,
-        device_farm_reason=reason_2
-    ))
-    
-    # This one also triggers
-    is_df_3, ttt_3, reason_3 = evaluate_transaction(db, TransactionCreate(
-        sender_account="ACC_006", receiver_account="ACC_002", amount=1100.00,
-        timestamp=now - timedelta(minutes=2), device_metadata={
-            "ip_address": "198.51.100.22",
-            "device_fingerprint": "df_fingerprint_xyz",
-            "login_time": (now - timedelta(minutes=2, seconds=15))
-        }
-    ))
-    db.add(Transaction(
-        sender_account="ACC_006", receiver_account="ACC_002", amount=1100.00,
-        timestamp=now - timedelta(minutes=2), ip_address="198.51.100.22",
-        device_fingerprint="df_fingerprint_xyz", login_time=now - timedelta(minutes=2, seconds=15),
-        time_to_transfer_seconds=15.0, is_device_farm_suspected=is_df_3,
-        device_farm_reason=reason_3
-    ))
-    
+    for sender, receiver, amount, hours_ago, ip, fg, login_delta, is_mule in tx_configs:
+        class_type = "mule" if is_mule else "legitimate"
+        try:
+            sample = get_sample_by_class(class_type)
+            features_dict = sample["features"]
+        except Exception:
+            features_dict = {}
+            
+        mule_prob = 0.0
+        top_features = []
+        if features_dict:
+            try:
+                ml_res = predict_mule_score(features_dict)
+                mule_prob = ml_res["mule_probability"]
+                top_features = ml_res["top_contributing_features"]
+            except Exception as e:
+                print(f"ML evaluation failed during seeding: {e}")
+                
+        if is_mule:
+            top_f_strings = [f"{f['feature']} (val: {f['value']})" for f in top_features[:2]]
+            reason = f"ML Score: {(mule_prob*100):.1f}% Mule Probability. Key features: {', '.join(top_f_strings)}"
+        else:
+            reason = f"ML Score: {(mule_prob*100):.1f}% Mule Probability. Behaviors consistent with legitimate profiles."
+            
+        tx = Transaction(
+            sender_account=sender,
+            receiver_account=receiver,
+            amount=amount,
+            timestamp=now - timedelta(hours=hours_ago),
+            ip_address=ip,
+            device_fingerprint=fg,
+            login_time=now - timedelta(hours=hours_ago, minutes=login_delta),
+            time_to_transfer_seconds=login_delta * 60.0,
+            is_device_farm_suspected=is_mule,
+            device_farm_reason=reason,
+            mule_probability=mule_prob,
+            feature_vector_json=json.dumps(features_dict) if features_dict else None
+        )
+        db.add(tx)
+        
     # 4. Seed Government Cyber Fraud Tickets
     db.add(GovernmentTicket(
         ticket_id="TKT-88492", reported_account="ACC_008",
@@ -638,5 +713,5 @@ def seed_mock_data(db: Session = Depends(get_session)):
     ))
     
     db.commit()
-    return {"message": "Mock data seeded successfully with normal, velocity-flagged, and emulator-flagged transfers"}
+    return {"message": "Mock data seeded successfully with ML-backed transaction profiles"}
 

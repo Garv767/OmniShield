@@ -37,6 +37,8 @@ class Transaction(SQLModel, table=True):
     time_to_transfer_seconds: float
     is_device_farm_suspected: bool = Field(default=False)
     device_farm_reason: Optional[str] = Field(default=None)
+    mule_probability: Optional[float] = Field(default=None)
+    feature_vector_json: Optional[str] = Field(default=None)
 
 class GovernmentTicket(SQLModel, table=True):
     ticket_id: str = Field(primary_key=True, index=True)
