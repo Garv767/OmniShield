@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: 210 40% 98%;
   --card: 0 0% 100%;
@@ -9,6 +11,14 @@
   --secondary: 210 40% 96.1%;
   --border: 214.3 31.8% 91.4%;
   --success: 100 50% 68%;
+}
+
+.dark {
+  --background: 224 71% 4%; /* Slate 950 */
+  --card: 222 47% 11%; /* Slate 900 */
+  --foreground: 210 40% 98%; /* Slate 50 */
+  --border: 217 33% 17%; /* Slate 800 */
+  --secondary: 222.2 47.4% 11.2%;
 }
 
 @theme {
@@ -55,4 +65,9 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--primary) / 0.3);
+}
+
+select, option {
+  background-color: var(--color-card) !important;
+  color: var(--color-foreground) !important;
 }

@@ -258,6 +258,20 @@ def get_network_graph(db: Session = Depends(get_session)):
         is_cyber_flagged = acc in ticket_accounts
         is_alert_flagged = acc in alert_accounts
         
+        # Collect IP addresses and fingerprints from transactions involving this account
+        acc_ips = set()
+        acc_fingerprints = set()
+        for tx in txs:
+            if tx.sender_account == acc or tx.receiver_account == acc:
+                if tx.ip_address:
+                    acc_ips.add(tx.ip_address)
+                if tx.device_fingerprint:
+                    acc_fingerprints.add(tx.device_fingerprint)
+        ip_list = list(acc_ips)
+        fp_list = list(acc_fingerprints)
+        primary_ip = ip_list[0] if ip_list else "192.168.1.1"
+        primary_fingerprint = fp_list[0] if fp_list else "fp_unknown"
+
         # Simple dynamic risk calculation for node display
         node_score = 0.0
         if is_suspected:
@@ -278,6 +292,10 @@ def get_network_graph(db: Session = Depends(get_session)):
             "is_alert_flagged": is_alert_flagged,
             "is_frozen": is_frozen,
             "risk_score": node_score,
+            "ip_address": primary_ip,
+            "device_fingerprint": primary_fingerprint,
+            "ip_addresses": ip_list,
+            "device_fingerprints": fp_list,
             # Size of node increases with risk severity
             "val": 5 if is_frozen else (4 if (is_suspected or is_cyber_flagged or is_alert_flagged) else 2)
         })
@@ -293,10 +311,13 @@ def get_network_graph(db: Session = Depends(get_session)):
                 "target": tx.receiver_account,
                 "amount": 0.0,
                 "count": 0,
-                "is_device_farm_suspected": False
+                "is_device_farm_suspected": False,
+                "timestamp": tx.timestamp.isoformat()
             }
         flow_map[key]["amount"] += tx.amount
         flow_map[key]["count"] += 1
+        if tx.timestamp.isoformat() < flow_map[key]["timestamp"]:
+            flow_map[key]["timestamp"] = tx.timestamp.isoformat()
         if tx.is_device_farm_suspected:
             flow_map[key]["is_device_farm_suspected"] = True
             

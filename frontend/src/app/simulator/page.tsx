@@ -64,16 +64,16 @@ export default function SimulatorPage() {
   };
 
   return (
-    <div className="p-8 h-full flex flex-col space-y-6 bg-slate-50 text-slate-900 font-sans overflow-y-auto">
-      <h1 className="text-sm font-bold text-slate-900">Transaction Ingestion Simulator</h1>
+    <div className="p-8 h-full flex flex-col space-y-6 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans overflow-y-auto transition-colors duration-200">
+      <h1 className="text-sm font-bold text-slate-900 dark:text-slate-100">Transaction Ingestion Simulator</h1>
       
-      <div className="bg-white p-6 border border-slate-200 rounded-xl max-w-2xl shadow-sm">
+      <div className="bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 rounded-xl max-w-2xl shadow-sm">
         <div className="space-y-1.5 mb-6">
-          <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-            <Globe className="w-4 h-4 text-slate-700" strokeWidth={1.5} />
+          <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider flex items-center space-x-2">
+            <Globe className="w-4 h-4 text-lime-primary" strokeWidth={1.5} />
             <span>Transaction Parameters</span>
           </h3>
-          <p className="text-xs text-slate-600 font-medium">
+          <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">
             Inject custom simulated transaction streams to evaluate IP velocity or device emulator anomalies.
           </p>
         </div>
@@ -82,65 +82,65 @@ export default function SimulatorPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col space-y-1.5">
-                <label className="text-[10px] uppercase font-bold text-slate-700">Sender Account ID</label>
+                <label className="text-[10px] uppercase font-bold text-slate-700 dark:text-slate-400">Sender Account ID</label>
                 <input
                   type="text"
                   value={txSender}
                   onChange={(e) => setTxSender(e.target.value)}
                   required
-                  className="w-full bg-white border border-slate-200 focus:border-lime-primary focus:bg-white focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 transition rounded-lg"
+                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-lime-primary focus:bg-white dark:focus:bg-slate-950 focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 dark:text-slate-100 transition rounded-lg"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <label className="text-[10px] uppercase font-bold text-slate-700">Receiver Account ID</label>
+                <label className="text-[10px] uppercase font-bold text-slate-700 dark:text-slate-400">Receiver Account ID</label>
                 <input
                   type="text"
                   value={txReceiver}
                   onChange={(e) => setTxReceiver(e.target.value)}
                   required
-                  className="w-full bg-white border border-slate-200 focus:border-lime-primary focus:bg-white focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 transition rounded-lg"
+                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-lime-primary focus:bg-white dark:focus:bg-slate-950 focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 dark:text-slate-100 transition rounded-lg"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col space-y-1.5">
-                <label className="text-[10px] uppercase font-bold text-slate-700">Amount (INR)</label>
+                <label className="text-[10px] uppercase font-bold text-slate-700 dark:text-slate-400">Amount (INR)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={txAmount}
                   onChange={(e) => setTxAmount(e.target.value)}
                   required
-                  className="w-full bg-white border border-slate-200 focus:border-lime-primary focus:bg-white focus:outline-none px-3 py-2 text-xs text-slate-900 transition rounded-lg font-mono"
+                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-lime-primary focus:bg-white dark:focus:bg-slate-950 focus:outline-none px-3 py-2 text-xs text-slate-900 dark:text-slate-100 transition rounded-lg font-mono"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <label className="text-[10px] uppercase font-bold text-slate-700">IP Address</label>
+                <label className="text-[10px] uppercase font-bold text-slate-700 dark:text-slate-400">IP Address</label>
                 <input
                   type="text"
                   value={txIp}
                   onChange={(e) => setTxIp(e.target.value)}
                   required
-                  className="w-full bg-white border border-slate-200 focus:border-lime-primary focus:bg-white focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 transition rounded-lg"
+                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-lime-primary focus:bg-white dark:focus:bg-slate-950 focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 dark:text-slate-100 transition rounded-lg"
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <label className="text-[10px] uppercase font-bold text-slate-700">Fingerprint</label>
+                <label className="text-[10px] uppercase font-bold text-slate-700 dark:text-slate-400">Fingerprint</label>
                 <input
                   type="text"
                   value={txFingerprint}
                   onChange={(e) => setTxFingerprint(e.target.value)}
                   required
-                  className="w-full bg-white border border-slate-200 focus:border-lime-primary focus:bg-white focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 transition rounded-lg"
+                  className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-lime-primary focus:bg-white dark:focus:bg-slate-950 focus:outline-none px-3 py-2 text-xs font-mono text-slate-900 dark:text-slate-100 transition rounded-lg"
                 />
               </div>
             </div>
 
-            <div className="space-y-2 bg-slate-50 p-4 border border-slate-200 rounded-lg">
+            <div className="space-y-2 bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 rounded-lg">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-semibold text-slate-700 uppercase text-[9px]">Time-To-Transfer</span>
-                <span className="text-teal-600 font-bold font-mono">{txLoginDelay} Seconds</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-400 uppercase text-[9px]">Time-To-Transfer</span>
+                <span className="text-teal-650 dark:text-teal-400 font-bold font-mono">{txLoginDelay} Seconds</span>
               </div>
               <input
                 type="range"
@@ -149,9 +149,9 @@ export default function SimulatorPage() {
                 step="0.1"
                 value={txLoginDelay}
                 onChange={(e) => setTxLoginDelay(e.target.value)}
-                className="w-full accent-lime-primary bg-slate-200 h-1 appearance-none cursor-pointer rounded-full"
+                className="w-full accent-lime-primary bg-slate-200 dark:bg-slate-800 h-1 appearance-none cursor-pointer rounded-full"
               />
-              <div className="flex justify-between text-[9px] text-slate-400 uppercase mt-1">
+              <div className="flex justify-between text-[9px] text-slate-400 dark:text-slate-500 uppercase mt-1">
                 <span>Emulator Threshold (&lt; 2s)</span>
                 <span>Human Tolerance (&gt; 2s)</span>
               </div>
@@ -162,7 +162,7 @@ export default function SimulatorPage() {
             <button
               type="submit"
               disabled={txSubmitting}
-              className="px-4 py-2 bg-lime-primary hover:bg-lime-primary/90 text-slate-900 font-bold text-xs transition flex items-center space-x-2 cursor-pointer rounded-lg shadow-sm animate-none"
+              className="px-4 py-2 bg-lime-primary hover:bg-lime-primary/90 text-slate-900 font-bold text-xs transition flex items-center space-x-2 cursor-pointer rounded-lg shadow-sm border-none disabled:opacity-50"
             >
               {txSubmitting ? (
                 <Loader className="w-4 h-4 animate-spin text-slate-900" strokeWidth={1.5} />
@@ -177,35 +177,35 @@ export default function SimulatorPage() {
         {txResult && (
           <div className={`mt-6 p-4 border rounded-lg text-xs ${txResult.success
             ? txResult.data.is_device_farm_suspected
-              ? 'bg-red-500/5 border-red-500/20 text-red-650'
-              : 'bg-lime-primary/15 border-lime-primary/30 text-slate-800 font-semibold'
-            : 'bg-red-500/5 border-red-500/20 text-red-650'
+              ? 'bg-red-500/5 border-red-500/20 text-red-650 dark:text-red-400'
+              : 'bg-lime-primary/15 border-lime-primary/30 text-slate-800 dark:text-lime-primary font-semibold'
+            : 'bg-red-500/5 border-red-500/20 text-red-650 dark:text-red-400'
             }`}>
             {txResult.success ? (
               <div className="space-y-1.5">
-                <p className="font-bold uppercase tracking-wider text-[9px] text-slate-500">Ingestion Ingress Analysis:</p>
+                <p className="font-bold uppercase tracking-wider text-[9px] text-slate-500 dark:text-slate-405">Ingestion Ingress Analysis:</p>
                 <div className="flex items-center space-x-2">
-                  <span className="font-semibold text-slate-500">Audit Status:</span>
+                  <span className="font-semibold text-slate-500 dark:text-slate-405">Audit Status:</span>
                   {txResult.data.is_device_farm_suspected ? (
-                    <span className="flex items-center space-x-1.5 font-bold text-red-650">
+                    <span className="flex items-center space-x-1.5 font-bold text-red-650 dark:text-red-400">
                       <span className="w-1.5 h-1.5 bg-red-500 rounded-full inline-block"></span>
                       <span>Flagged Anomaly</span>
                     </span>
                   ) : (
-                    <span className="flex items-center space-x-1.5 font-bold text-teal-600">
+                    <span className="flex items-center space-x-1.5 font-bold text-teal-600 dark:text-teal-400">
                       <span className="w-1.5 h-1.5 bg-teal-600 rounded-full inline-block"></span>
                       <span>Approved / Standard Risk</span>
                     </span>
                   )}
                 </div>
                 {txResult.data.device_farm_reason && (
-                  <p className="mt-1 text-[11px] text-slate-600 font-medium">
-                    <span className="font-semibold text-slate-400">Diagnostics:</span> {txResult.data.device_farm_reason}
+                  <p className="mt-1 text-[11px] text-slate-650 dark:text-slate-300 font-medium">
+                    <span className="font-semibold text-slate-400 dark:text-slate-500">Diagnostics:</span> {txResult.data.device_farm_reason}
                   </p>
                 )}
               </div>
             ) : (
-              <p className="font-mono text-red-650">System Classification Error: {txResult.error}</p>
+              <p className="font-mono text-red-655 dark:text-red-400">System Classification Error: {txResult.error}</p>
             )}
           </div>
         )}
