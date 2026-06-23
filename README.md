@@ -12,25 +12,7 @@
 
 ## 🏗️ Architecture & Data Ingestion Flow
 
-```mermaid
-graph TD
-    A[Real-time Transactions JSON] -->|POST /api/transactions| B(FastAPI Server)
-    C[Gov Cyber Complaints CSV] -->|POST /api/upload-government-tickets| B
-    D[Cross-Channel Alerts JSON] -->|POST /api/alerts| B
-    I[Mule Accounts Dataset] -->|Google Colab Training| J[mule_model.pkl]
-    
-    B -->|SQLModel ORM| E[(SQLite / DB)]
-    B -->|Rule Engine| F[detector.py Heuristics]
-    B -->|LangChain Prompt| G[llm.py SAR Compiler]
-    B -->|XGBoost Model| K[mule_classifier.py Inference]
-    J -->|Load on Startup| K
-    
-    H[Next.js Client] -->|GET /api/network-graph| B
-    H -->|GET /api/statistics| B
-    H -->|GET /api/generate-sar| B
-    H -->|POST /api/ml-classify| B
-    H -->|GET /api/ml-sample| B
-```
+![Architecture Diagram](<Architecture diagram.png>)
 
 ---
 

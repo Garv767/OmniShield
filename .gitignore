@@ -21,6 +21,17 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Data sets
+# Data sets / Media / Logs
 *.csv
 *.pdf
+*.pptx
+*.log
+*.db
+*.sqlite3
+
+
+# Project-specific ignored documents
+solution_approach.html
+solution_approach.md
+CyberSheild Solution Approach RepoKids.pdf
+
