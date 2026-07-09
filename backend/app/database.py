@@ -7,8 +7,15 @@ from sqlmodel import Field, SQLModel, create_engine, Session
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./fraud_detection.db")
 
 # SQLite needs connect_args={"check_same_thread": False} for multithreading
-connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+# PostgreSQL (like Netlify Database / Supabase) does not.
+if DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+    engine = create_engine(DATABASE_URL, connect_args=connect_args)
+else:
+    # For Postgres/Netlify DB, ensure it uses psycopg2 or psycopg depending on driver
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    engine = create_engine(DATABASE_URL)
 
 class UserProfile(SQLModel, table=True):
     account_id: str = Field(primary_key=True, index=True)

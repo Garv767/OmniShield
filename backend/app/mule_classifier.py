@@ -1,7 +1,14 @@
 import os
-import joblib
-import pandas as pd
 import numpy as np
+import json
+
+USE_ONNX = os.getenv("USE_ONNX", "False").lower() in ("true", "1")
+
+if not USE_ONNX:
+    import joblib
+    import pandas as pd
+else:
+    import onnxruntime as rt
 
 # Global variables to hold the loaded model and feature names
 _MODEL = None
@@ -19,29 +26,51 @@ def load_model(model_path: str = "app/mule_model.pkl", dataset_path: str = "../D
     Also caches dataset splits for class-specific sampling.
     """
     global _MODEL, _FEATURE_NAMES, _CATEGORICAL_INFO, _SCALER, _PCA, _BACKGROUND_POINTS
-    if os.path.exists(model_path):
-        try:
-            model_data = joblib.load(model_path)
-            _MODEL = model_data["model"]
-            _FEATURE_NAMES = model_data["feature_names"]
-            _CATEGORICAL_INFO = model_data.get("categorical_info", {})
-            _SCALER = model_data.get("scaler")
-            _PCA = model_data.get("pca")
-            _BACKGROUND_POINTS = model_data.get("background_points", [])
-            print(f"Successfully loaded ML model from {model_path} with {len(_FEATURE_NAMES)} selected features.")
-        except Exception as e:
-            print(f"Failed to load ML model: {e}")
-            _MODEL = None
-            _FEATURE_NAMES = None
-            _CATEGORICAL_INFO = None
-            _SCALER = None
-            _PCA = None
-            _BACKGROUND_POINTS = None
-    else:
-        print(f"Model file {model_path} not found. ML classification will be disabled.")
+    
+    if USE_ONNX:
+        onnx_path = model_path.replace(".pkl", ".onnx")
+        meta_path = model_path.replace(".pkl", ".json").replace("mule_model", "mule_metadata")
         
-    # Cache dataset splits
-    cache_dataset_splits(dataset_path)
+        if os.path.exists(onnx_path) and os.path.exists(meta_path):
+            try:
+                _MODEL = rt.InferenceSession(onnx_path)
+                with open(meta_path, "r") as f:
+                    meta = json.load(f)
+                _FEATURE_NAMES = meta.get("feature_names", [])
+                _CATEGORICAL_INFO = meta.get("categorical_info", {})
+                _SCALER = meta.get("scaler")
+                _PCA = meta.get("pca")
+                _BACKGROUND_POINTS = meta.get("background_points", [])
+                print(f"Successfully loaded ONNX model from {onnx_path}")
+            except Exception as e:
+                print(f"Failed to load ONNX model: {e}")
+        else:
+            print(f"ONNX model files not found at {onnx_path} or {meta_path}")
+            
+    else:
+        if os.path.exists(model_path):
+            try:
+                model_data = joblib.load(model_path)
+                _MODEL = model_data["model"]
+                _FEATURE_NAMES = model_data["feature_names"]
+                _CATEGORICAL_INFO = model_data.get("categorical_info", {})
+                _SCALER = model_data.get("scaler")
+                _PCA = model_data.get("pca")
+                _BACKGROUND_POINTS = model_data.get("background_points", [])
+                print(f"Successfully loaded ML model from {model_path} with {len(_FEATURE_NAMES)} selected features.")
+            except Exception as e:
+                print(f"Failed to load ML model: {e}")
+                _MODEL = None
+                _FEATURE_NAMES = None
+                _CATEGORICAL_INFO = None
+                _SCALER = None
+                _PCA = None
+                _BACKGROUND_POINTS = None
+        else:
+            print(f"Model file {model_path} not found. ML classification will be disabled.")
+            
+        # Cache dataset splits only in standard mode since Pandas is required
+        cache_dataset_splits(dataset_path)
 
 def cache_dataset_splits(dataset_path: str):
     """
@@ -121,7 +150,7 @@ def predict_mule_score(features: dict) -> dict:
             else:
                 numeric_val = -1.0 # default missing
         else:
-            if val is None or pd.isna(val):
+            if val is None:
                 numeric_val = np.nan
             else:
                 try:
@@ -132,9 +161,17 @@ def predict_mule_score(features: dict) -> dict:
         input_row.append(numeric_val)
         local_values[fname] = val
 
-    # Convert to pandas DataFrame for XGBoost prediction
-    df_input = pd.DataFrame([input_row], columns=_FEATURE_NAMES)
-    prob = float(_MODEL.predict_proba(df_input)[0, 1])
+    if USE_ONNX:
+        # ONNX Prediction
+        input_data = np.array([input_row], dtype=np.float32)
+        input_name = _MODEL.get_inputs()[0].name
+        label_name = _MODEL.get_outputs()[1].name
+        pred_onx = _MODEL.run([label_name], {input_name: input_data})
+        prob = float(pred_onx[0][0][1])  # Class 1 probability
+    else:
+        # XGBoost Prediction
+        df_input = pd.DataFrame([input_row], columns=_FEATURE_NAMES)
+        prob = float(_MODEL.predict_proba(df_input)[0, 1])
 
     # 2. Compute PCA 2D Coordinates
     pca_coords = {"x": 0.0, "y": 0.0}
@@ -142,32 +179,59 @@ def predict_mule_score(features: dict) -> dict:
         # Fill missing values using training means from the scaler
         filled_row = []
         for i, val in enumerate(input_row):
-            if pd.isna(val) or val == -1.0:
-                filled_row.append(float(_SCALER.mean_[i]))
+            if np.isnan(val) or val == -1.0:
+                if USE_ONNX:
+                    filled_row.append(float(_SCALER["mean"][i]))
+                else:
+                    filled_row.append(float(_SCALER.mean_[i]))
             else:
                 filled_row.append(val)
         
         try:
-            # Scale and project
-            scaled_row = _SCALER.transform([filled_row])
-            projected = _PCA.transform(scaled_row)[0]
-            pca_coords = {"x": float(projected[0]), "y": float(projected[1])}
+            if USE_ONNX:
+                # Manual standard scaling and PCA projection
+                means = np.array(_SCALER["mean"])
+                scales = np.array(_SCALER["scale"])
+                pca_comp = np.array(_PCA["components"])
+                pca_mean = np.array(_PCA["mean"])
+                
+                scaled = (np.array(filled_row) - means) / scales
+                projected = np.dot(scaled - pca_mean, pca_comp.T)
+                pca_coords = {"x": float(projected[0]), "y": float(projected[1])}
+            else:
+                # Scale and project using sklearn objects
+                scaled_row = _SCALER.transform([filled_row])
+                projected = _PCA.transform(scaled_row)[0]
+                pca_coords = {"x": float(projected[0]), "y": float(projected[1])}
         except Exception as e:
             print(f"Failed to project coordinates with PCA: {e}")
 
     # 3. Explainable AI (Local Feature Impact)
     # Estimate feature contribution = (value - mean) / std * global_importance
-    importances = _MODEL.feature_importances_
+    if USE_ONNX:
+        # Load importances from metadata
+        meta_path = os.path.join(os.path.dirname(__file__), "mule_metadata.json")
+        with open(meta_path, "r") as f:
+            meta = json.load(f)
+        importances = meta.get("feature_importances", [1.0] * len(_FEATURE_NAMES))
+    else:
+        importances = _MODEL.feature_importances_
+        
     feature_impacts = []
     
     for i, fname in enumerate(_FEATURE_NAMES):
         val = input_row[i]
-        mean = float(_SCALER.mean_[i]) if _SCALER is not None else 0.0
-        std = float(_SCALER.scale_[i]) if _SCALER is not None else 1.0
+        if USE_ONNX:
+            mean = float(_SCALER["mean"][i]) if _SCALER is not None else 0.0
+            std = float(_SCALER["scale"][i]) if _SCALER is not None else 1.0
+        else:
+            mean = float(_SCALER.mean_[i]) if _SCALER is not None else 0.0
+            std = float(_SCALER.scale_[i]) if _SCALER is not None else 1.0
+            
         importance = float(importances[i])
         
         # Calculate contribution score
-        if pd.isna(val) or val == -1.0:
+        if np.isnan(val) or val == -1.0:
             contrib = 0.0 
         else:
             contrib = ((val - mean) / max(1e-5, std)) * importance

@@ -48,13 +48,34 @@
 
 ---
 
-## 💻 Local Quickstart
+## 💻 Running the Application
 
 ### Prerequisites
 * Python 3.10+
 * Node.js v18+ & npm
 
-### 1. Backend Service Configuration (FastAPI)
+### Method 1: Serverless Full-Stack (Easier to deploy)
+This unified approach runs the backend as serverless functions alongside the Next.js frontend. It uses a lightweight ONNX runtime for machine learning, completely avoiding heavy dependencies like XGBoost or Pandas to stay within AWS Lambda limits. This method is optimized for seamless deployment on **Vercel** or **Netlify**.
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install frontend and serverless Python dependencies:
+   ```bash
+   npm install
+   pip install -r requirements.txt
+   ```
+3. Launch the unified development server:
+   * **For Vercel**: run `vercel dev`
+   * **For Netlify**: run `netlify dev`
+   
+   *Open **`http://localhost:3000`** in your browser. API requests are automatically routed to the serverless Python endpoints.*
+
+### Method 2: Dedicated Backend Service (Better ML capabilities)
+This approach runs the FastAPI backend as a standalone local service utilizing the full XGBoost and Scikit-Learn data science pipeline.
+
+#### Backend Setup
 1. Navigate to the backend directory:
    ```bash
    cd backend
@@ -80,10 +101,10 @@
    ```
    *The Swagger interactive documentation will be hosted at `http://localhost:8000/docs`.*
 
-### 2. Frontend client configuration (Next.js)
-1. Navigate to the frontend directory:
+#### Frontend Setup
+1. Open a new terminal and navigate to the frontend directory:
    ```bash
-   cd ../frontend
+   cd frontend
    ```
 2. Install dependencies:
    ```bash
